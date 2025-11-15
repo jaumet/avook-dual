@@ -1,0 +1,122 @@
+{
+  "PATH_AUDIOS": "/AUDIOS/",
+  "AUDIOS": {
+    "el-mapa-de-la-biblioteca": {
+      "title-human": "El mapa de la biblioteca",
+      "description": "quí descripció",
+      "levels": "A2",
+      "langs": "CA, EN, Fr",
+      "ages": "10-16",
+      "colection": "Misteria i enigmes",
+      "duration": "00:02:00",
+      "CA-el-mapa-de-la-biblioteca.json": "file",
+      "EN-el-mapa-de-la-biblioteca.json": "file",
+      "FR-el-mapa-de-la-biblioteca.json": "file"
+    },
+    "Trobada-a-l-exposicio": {
+      "title-human": "Trobada a l'exposició",
+      "description": "Aquí descripció",
+      "levels": "B2",
+      "langs": "CA, DE, EN, ES, FR, IT, PT",
+      "ages": "16-99",
+      "colection": "Converses i situacions quotidianes",
+      "duration": "00:03:30",
+      "CA-Trobada-a-l-exposicio.json": "file",
+      "DE-Trobada-a-l-exposicio.json": "file",
+      "EN-Trobada-a-l-exposicio.json": "file",
+      "ES-Trobada-a-l-exposicio.json": "file",
+      "FR-Trobada-a-l-exposicio.json": "file",
+      "IT-Trobada-a-l-exposicio.json": "file",
+      "PT-Trobada-a-l-exposicio.json": "file"
+    },
+    "Reportatge-al-mercat": {
+      "title-human": "Reportatge al mercat",
+      "description": "Una visita al mercat plena de colors, converses i vida quotidiana.",
+      "levels": "B1",
+      "langs": "CA, EN, ES, FR",
+      "ages": "10-99",
+      "colection": "Cuina i vida quotidiana",
+      "duration": "00:04:30",
+      "CA-Reportatge-al-mercat.json": "file",
+      "EN-Reportatge-al-mercat.json": "file",
+      "ES-Reportatge-al-mercat.json": "file",
+      "FR-Reportatge-al-mercat.json": "file"
+    },
+    "titol_test": {
+      "title-human": "Test curt",
+      "description": "Simple test de 4 frases en 3 llengues: CA, EN, PT",
+      "levels": "A1",
+      "langs": "CA,EN,PT",
+      "ages": "0-99",
+      "colection": "Test",
+      "duration": "00:00:40",
+      "PT-titol_test.json": "file",
+      "EN-titol_test.json": "file",
+      "CA-titol_test.json": "file"
+    },
+    "0-1-Salutacions-i-emocions": {
+      "title-human": "Salutacions i emocions",
+      "description": "",
+      "levels": "A0",
+      "langs": "CA, EN",
+      "ages": "0-99",
+      "CA-0-1-Salutacions-i-emocions.json": "file",
+      "EN-0-1-Salutacions-i-emocions.json": "file"
+    },
+    "0-2-D-on-ets": {
+      "title-human": "D on ets",
+      "description": "",
+      "levels": "A0",
+      "langs": "CA, EN",
+      "ages": "0-99",
+      "EN-0-2.json": "file",
+      "CA-0-2.json": "file"
+    },
+    "0-3-Bon-dia-bona-nit": {
+      "title-human": "Bon dia bona nit",
+      "description": "",
+      "levels": "A0",
+      "langs": "CA, EN",
+      "ages": "0-99",
+      "EN-0-3.json": "file",
+      "CA-0-3.json": "file"
+    },
+    "0-4-A-casa-meva": {
+      "title-human": "A casa meva",
+      "description": "",
+      "levels": "A0",
+      "langs": "CA, EN",
+      "ages": "0-99",
+      "EN-0-4.json": "file",
+      "CA-0-4.json": "file"
+    },
+    "0-5-Relacions-i-presentacions": {
+      "title-human": "Relacions i presentacions",
+      "description": "",
+      "levels": "A0",
+      "langs": "CA, EN",
+      "ages": "0-99",
+      "EN-0-5.json": "file",
+      "CA-0-5.json": "file"
+    },
+    "0-6-Objectes-i-aliments": {
+      "title-human": "Objectes i aliments",
+      "description": "",
+      "levels": "A0",
+      "langs": "CA, EN",
+      "ages": "0-99",
+      "EN-0-6.json": "file",
+      "CA-0-6.json": "file"
+    },
+    "Els-primers-pobles-del-mon": {
+      "title-human": "Els primers pobles del món",
+      "description": "Un text A1 que explica, de manera molt simple, com van néixer els primers pobles a la vora dels grans rius del món.",
+      "levels": "A1",
+      "langs": "CA, EN, ES",
+      "ages": "0-99",
+      "CA-Els-primers-pobles-del-mon.json": "file",
+      "ES-Els-primers-pobles-del-mon.json": "file",
+      "EN-Els-primers-pobles-del-mon.json": "file"
+    }
+  }
+}

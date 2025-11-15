@@ -1,0 +1,30 @@
+[
+    {
+        "n": 1,
+        "text": "Lá càsa éra de colór vèrd.",
+        "file": "CA/0001.wav",
+        "lang": "CA",
+        "datetime": "2025-10-30T15:13:38+00:00"
+    },
+    {
+        "n": 2,
+        "text": "Lá muntánya, èn càmbi, éra de colór vermèll.",
+        "file": "CA/0002.wav",
+        "lang": "CA",
+        "datetime": "2025-10-30T15:13:40+00:00"
+    },
+    {
+        "n": 3,
+        "text": "Tenía el cór blàucèl i jugáva àmb els díts, inquìèt.",
+        "file": "CA/0003.wav",
+        "lang": "CA",
+        "datetime": "2025-10-30T15:13:41+00:00"
+    },
+    {
+        "n": 4,
+        "text": "Passànt tót àixò, miràva, perdùt, pér lá finèstra de lá càmbra.",
+        "file": "CA/0004.wav",
+        "lang": "CA",
+        "datetime": "2025-10-30T15:13:43+00:00"
+    }
+]

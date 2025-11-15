@@ -1,0 +1,30 @@
+[
+    {
+        "n": 1,
+        "text": "The house was green.",
+        "file": "EN/0001.wav",
+        "lang": "EN",
+        "datetime": "2025-10-28T09:07:23+00:00"
+    },
+    {
+        "n": 2,
+        "text": "The mountain, instead, was red.",
+        "file": "EN/0002.wav",
+        "lang": "EN",
+        "datetime": "2025-10-28T09:07:25+00:00"
+    },
+    {
+        "n": 3,
+        "text": "It had a sky-blue heart and played with its restless fingers.",
+        "file": "EN/0003.wav",
+        "lang": "EN",
+        "datetime": "2025-10-28T09:07:28+00:00"
+    },
+    {
+        "n": 4,
+        "text": "While all that was happening, it watched, lost, through the window of the room.",
+        "file": "EN/0004.wav",
+        "lang": "EN",
+        "datetime": "2025-10-28T09:07:30+00:00"
+    }
+]

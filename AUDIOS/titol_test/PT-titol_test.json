@@ -1,0 +1,30 @@
+[
+    {
+        "n": 1,
+        "text": "A casa era verde.",
+        "file": "PT/0001.wav",
+        "lang": "PT",
+        "datetime": "2025-10-28T09:29:16+00:00"
+    },
+    {
+        "n": 2,
+        "text": "A montanha, por sua vez, era vermelha.",
+        "file": "PT/0002.wav",
+        "lang": "PT",
+        "datetime": "2025-10-28T09:29:19+00:00"
+    },
+    {
+        "n": 3,
+        "text": "Tinha o coração azul-céu e brincava com os dedos inquietos.",
+        "file": "PT/0003.wav",
+        "lang": "PT",
+        "datetime": "2025-10-28T09:29:21+00:00"
+    },
+    {
+        "n": 4,
+        "text": "Enquanto tudo isso acontecia, olhava, perdido, pela janela do quarto.",
+        "file": "PT/0004.wav",
+        "lang": "PT",
+        "datetime": "2025-10-28T09:29:24+00:00"
+    }
+]

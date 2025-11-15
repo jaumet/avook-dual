@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Audiovook Dual – Player</title>
+<!-- Open Graph / Social Preview -->
+<meta property="og:title" content="Audiovook Dual — comprensió i escolta">
+<meta property="og:description" content="Aprèn llengües escoltant històries. Audiovook Dual combina dues llengües en una experiència auditiva única: comprensió i escolta.">
+<meta property="og:image" content="https://audiovook.com/dual/imgs/logo-dual-fons-blau.png">
+<meta property="og:url" content="https://audiovook.com/dual/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ca_ES">
+
+<!-- Twitter Card (opcional) -->
+<meta name="twitter:card" content="https://audiovook.com/dual/imgs/logo.png">
+<meta name="twitter:title" content="Audiovook Dual — comprensió i escolta">
+<meta name="twitter:description" content="Aprèn llengües escoltant històries amb el mètode Dual Understanding And Listening.">
+<meta name="twitter:image" content="https://audiovook.com/dual/imgs/logo-dual-fons-blau.png">
+
+<link rel="stylesheet" href="./css/player.css">
+</head>
+
+<body class="dark">
+<header>
+  <a href="https://audiovook.com/dual/">
+    <img src="./imgs/logo-dual-fons-blau.png" alt="Audiovook Dual logo"/> <h2>Dual</h2>&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;  <h5>by Audiovook</h5> <img style="height:20px !important; width:auto;" src="./imgs/logo.png" alt="Audiovook logo"/>
+  </a>
+  <div class="rightBtns">
+    <button id="themeBtn">☀️ Clar</button>
+    <button id="infoBtn">❓ Ajuda</button>
+  </div>
+</header>
+
+<main>
+  <section id="topInfo" class="topCard" style="display:none">
+    <img id="relatImg" src="./imgs/book-icon.png" alt="Imatge relat"/>
+    <div>
+      <h2 id="relatTitle">—</h2>
+      <div id="relatDesc" style="margin:.1em 0 .3em 0;">—</div>
+      <div class="langs">🌐 Idiomes: <span id="relatLangs">—</span></div>
+    </div>
+  </section>
+
+  <section id="setupPanel" class="panel-soft" style="display:none">
+    <div class="row">
+      <div class="langBox">
+        <strong>Primera llengua</strong>
+        <div id="radiosL1" class="radios"></div>
+        <label style="margin-top:.6em">Velocitat 1:
+          <select id="speed1"><option>0.5</option><option>0.7</option><option>0.8</option><option>0.9</option><option selected>1.0</option><option>1.1</option><option>1.2</option><option>1.5</option><option>2</option></select>
+        </label>
+      </div>
+      <div class="langBox">
+        <strong>Segona llengua (opcional)</strong>
+        <div id="radiosL2" class="radios"></div>
+        <label style="margin-top:.6em">Velocitat 2:
+          <select id="speed2"><option>0.5</option><option>0.7</option><option>0.8</option><option>0.9</option><option selected>1.0</option><option>1.1</option><option>1.2</option><option>1.5</option><option>2</option></select>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <section id="modesPanel" style="display:none;text-align:center;margin:1em 0;">
+    <div id="modesTitle">🌐 Modes d’escolta</div>
+    <div id="modeButtons"></div>
+  </section>
+
+  <section id="playerPanel" style="display:none" class="panel">
+    <div id="textBox">
+      <div id="progressInfo"></div>
+      <div id="textContent"></div>
+      <div id="progressBarContainer"><div id="progressBar"></div></div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:.8em;margin:.6em 0;">
+      <button id="prevBtn">⏮️</button>
+      <audio id="audio" controls></audio>
+      <button id="nextBtn">⏭️</button>
+    </div>
+    <button id="backBtn">⬅️ Torna al catàleg</button>
+  </section>
+
+</main>
+
+<!-- Modal ajuda -->
+<div id="infoModal">
+  <div id="infoContent">
+    <h3>ℹ️ Com aprofitar al màxim Audiovook Dual</h3>
+
+    <p><strong>Audiovook Dual</strong> és una manera divertida i efectiva d’aprendre llengües escoltant històries en dues versions: 
+    una llengua que domines i una que estàs aprenent.  
+    El mètode funciona perquè combina la repetició natural, la intuïció i l’emoció de les històries.</p>
+
+    <p>Si vols treure’n el màxim partit, segueix aquests consells pràctics.  
+    Pots aplicar-los tant si acabes de començar com si ja tens experiència amb idiomes.</p>
+
+    <h4>🟢 Consells per gaudir i aprendre</h4>
+    <ul id="tipsList">
+      <li><strong>🎵 Escolta com si fos música:</strong><br>
+        No cal entendre cada paraula ni traduir mentalment.  
+        Deixa’t portar pel ritme, la melodia i les pauses de la veu.  
+        Repetint escoltes, el significat apareixerà de manera intuïtiva.</li>
+
+      <li><strong>🔁 Juga amb l’ordre de les llengües:</strong><br>
+        Pots començar escoltant primer la teva llengua i després la nova,  
+        després al contrari, i finalment només la nova.  
+        Cada ordre activa parts diferents del cervell i reforça la comprensió.</li>
+
+      <li><strong><span class="tipIcon">🗣️</span> Llegeix i escolta:</strong><br>Aprofita que veus el text per llegir-lo alhora que l’escoltes. Compara la pronunciació i el ritme de la veu amb la teva lectura. Escriu o repeteix els fragments que més t’agradin: és una manera excel·lent de fixar vocabulari i estructura.</li>
+
+      <li><strong>⚙️ Ajusta la velocitat:</strong><br>
+        Si et costa seguir, redueix la velocitat fins que reconeguis paraules i patrons.  
+        Quan et sentis més segur, accelera fins al ritme natural de la parla.</li>
+
+      <li><strong>🎧 Escolta amb auriculars:</strong><br>
+        Et permetrà captar millor la pronunciació, la musicalitat i els detalls de la veu.  
+        Si pots, utilitza uns auriculars tancats que aïllin el soroll exterior.</li>
+
+      <li><strong>👁️ Imagina el relat:</strong><br>
+        Tanca els ulls i visualitza el que passa.  
+        Imaginar reforça la memòria i et connecta emocionalment amb el llenguatge.</li>
+
+      <li><strong>📖 Repassa el vocabulari:</strong><br>
+        Després d’escoltar, intenta recordar paraules o frases noves.  
+        No cal apuntar-ho tot: tria les que t’hagin cridat més l’atenció.</li>
+
+      <li><strong>⏳ Torna-hi més endavant:</strong><br>
+        Cada escolta t’aporta coses noves i consolida l’aprenentatge sense pressa.  
+        L’aprenentatge auditiu millora quan hi ha repeticions espaiades en el temps.</li>
+
+      <li><strong>🌍 Gaudeix de la diversitat:</strong><br>
+        Cada història i cada veu provenen d’una cultura diferent.  
+        Deixa’t sorprendre per les expressions, els accents i les formes de dir les coses.</li>
+    </ul>
+
+    <p>Recorda: <strong>aprendre una llengua és una experiència auditiva i emocional</strong>.  
+    Amb Audiovook Dual, pots aprendre escoltant històries, sense pressió i amb plaer.</p>
+
+    <button id="closeModal">Tanca</button>
+  </div>
+</div>
+<div id="cookieBanner">
+  <p>
+    Aquest lloc utilitza cookies pròpies per garantir el correcte funcionament i millorar l’experiència d’usuari.
+    <a href="./privacy.html" target="_blank">Més informació</a>
+  </p>
+  <button id="acceptCookies">D’acord</button>
+</div>
+
+<script>
+const qs=s=>document.querySelector(s),qsa=s=>[...document.querySelectorAll(s)];
+const getParam=name=>new URLSearchParams(window.location.search).get(name);
+const iso2to3=c=>({CA:'cat',EN:'eng',PT:'por',FR:'fra',IT:'ita',ES:'spa'})[c]||c.toLowerCase();
+let mainIndex=null,titleName=null,availableLangs=[],langData={},sequence=[],seqIndex=0;
+const audioEl=qs('#audio');
+
+function resolveImagePath(imgPath,title){
+  if(!imgPath||imgPath==='')return`./AUDIOS/${title}/${title}.png`;
+  if(/^https?:\/\//i.test(imgPath))return imgPath;
+  return`./AUDIOS/${title}/${imgPath.replace(/^\.?\/*/,'')}`;
+}
+
+async function loadIndex(){
+  const r=await fetch('./audios.json');
+  if(!r.ok)throw new Error('No s’ha pogut carregar audios.json');
+  return await r.json();
+}
+
+function showRelat(){
+  const info=mainIndex.AUDIOS[titleName]||{};
+  const desc=info.description||'(Sense descripció)';
+  const img=resolveImagePath(info.image,titleName);
+  const langs=Object.keys(info).filter(k=>k.endsWith('.json')).map(k=>k.substring(0,2));
+  availableLangs=langs;
+  qs('#topInfo').style.display='flex';
+  const humanTitle=info["title-human"]||titleName;
+  qs('#relatTitle').textContent=humanTitle;
+  document.title="Audiovook Dual – "+humanTitle;
+  qs('#relatDesc').textContent=desc;
+  qs('#relatImg').src=img;
+  qs('#relatLangs').textContent=langs.map(iso2to3).join(', ')||'-';
+  qs('#setupPanel').style.display='block';
+  qs('#modesPanel').style.display='block';
+  qs('#playerPanel').style.display='block';
+  qs('#backBtn').style.display='inline-block';
+  buildLangRadios();
+}
+
+function buildLangRadios(){
+  const L1=radiosMarkup(availableLangs,'l1',false);
+  const L2=`<label><input type="radio" name="l2" value=""> cap</label>`+radiosMarkup(availableLangs,'l2',false);
+  qs('#radiosL1').innerHTML=L1;
+  qs('#radiosL2').innerHTML=L2;
+  qsa('input[name="l1"]').forEach(r=>r.onchange=disableSameLang);
+  qsa('input[name="l2"]').forEach(r=>r.onchange=buildModes);
+}
+function radiosMarkup(langs,name,checked){
+  return langs.map(L=>`<label><input type="radio" name="${name}" value="${L}" ${checked?'checked':''}/> ${iso2to3(L)}</label>`).join('');
+}
+function getL1(){return qs('input[name="l1"]:checked')?.value||null;}
+function getL2(){return qs('input[name="l2"]:checked')?.value||null;}
+function disableSameLang(){
+  const l1=getL1();
+  qsa('input[name="l2"]').forEach(r=>{
+    r.disabled=(r.value&&r.value===l1);
+    if(r.checked&&r.disabled){const none=qs('input[name="l2"][value=""]');if(none)none.checked=true;}
+  });
+  buildModes();
+}
+
+function buildModes(){
+  const L1=getL1(),L2=getL2();
+  const buttons=[];
+  if(L1)buttons.push(L1);
+  if(L1&&L2&&L2!==''&&L2!==L1)buttons.push(`${L1}-${L2}`,`${L2}-${L1}`,L2);
+  const modeButtons=qs('#modeButtons');
+  const titleEl=qs('#modesTitle');
+  modeButtons.innerHTML=buttons.map(m=>`<button data-mode="${m}">${m}</button>`).join('');
+  titleEl.style.display=buttons.length>1?'block':'none';
+  qsa('#modeButtons button').forEach(b=>b.onclick=()=>startMode(b.dataset.mode));
+}
+
+async function startMode(mode){
+  const langs=mode.includes('-')?mode.split('-'):[mode];
+  for(const L of langs){
+    if(!langData[L]){
+      const path=`./AUDIOS/${titleName}/${L}-${titleName}.json`;
+      const r=await fetch(path);langData[L]=r.ok?await r.json():[];
+    }
+  }
+  sequence=[];
+  if(mode.includes('-')){
+    const[A,B]=mode.split('-');const len=Math.max(langData[A].length,langData[B].length);
+    for(let i=0;i<len;i++){
+      if(langData[A][i])sequence.push({...langData[A][i]});
+      if(langData[B][i])sequence.push({...langData[B][i]});
+    }
+  }else sequence=langData[mode].map(x=>({...x}));
+  seqIndex=0;playNext();
+}
+
+function playNext(manual=false){
+  if(seqIndex>=sequence.length){
+    if(!qs('#textContent').textContent.includes('Finalitzat')){
+      qs('#textContent').innerHTML+=' ✅ Finalitzat.';
+    }
+    updateProgress();
+    audioEl.src='';
+    return;
+  }
+  const item=sequence[seqIndex];
+  qs('#textContent').textContent=item.text||'—';
+  const L1=getL1(),spd1=parseFloat(qs('#speed1').value),spd2=parseFloat(qs('#speed2').value);
+  const spd=item.lang===L1?spd1:spd2;
+  const src=`https://audiovook.com/dual/AUDIOS/${titleName}/${item.file.replace(/^\.?\/*/,'')}`;
+  audioEl.src=src;
+  audioEl.playbackRate=spd;
+  if(!manual)audioEl.play().catch(()=>{});
+  audioEl.onended=()=>{seqIndex++;playNext();};
+  updateProgress();
+}
+
+function playPrev(){if(seqIndex>0){seqIndex--;playNext(true);}}
+function playNextManual(){if(seqIndex<sequence.length-1){seqIndex++;playNext(true);}}
+
+function updateProgress(){
+  const total=sequence.length||0;
+  const current=Math.min(seqIndex+1,total);
+  const percent=total?Math.round((current/total)*100):0;
+  qs('#progressInfo').textContent=`${current} / ${total} — ${percent}%`;
+  qs('#progressBar').style.width=percent+'%';
+}
+
+// Controls via teclat
+document.addEventListener('keydown',e=>{
+  if(['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName))return;
+  switch(e.key){
+    case ' ':e.preventDefault();audioEl.paused?audioEl.play():audioEl.pause();break;
+    case 'ArrowLeft':e.preventDefault();playPrev();break;
+    case 'ArrowRight':e.preventDefault();playNextManual();break;
+  }
+});
+qs('#prevBtn').onclick=()=>playPrev();
+qs('#nextBtn').onclick=()=>playNextManual();
+
+// 🌗 Theme toggle
+const themeBtn=qs('#themeBtn');
+themeBtn.onclick=()=>{
+  document.body.classList.toggle('light');
+  const isLight=document.body.classList.contains('light');
+  themeBtn.textContent=isLight?'🌙 Fosc':'☀️ Clar';
+};
+
+// 🆘 Modal d'ajuda
+const modal=document.getElementById('infoModal');
+const btn=document.getElementById('infoBtn');
+const close=document.getElementById('closeModal');
+btn.onclick=()=>modal.style.display='flex';
+close.onclick=()=>modal.style.display='none';
+window.onclick=e=>{if(e.target==modal)modal.style.display='none';};
+
+// Inici
+(async ()=>{
+  mainIndex=await loadIndex();
+  titleName=getParam('title');
+  if(!titleName)return;
+  showRelat();
+})();
+qs('#backBtn').onclick=()=>{window.location.href='https://audiovook.com/dual/';};
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const banner = document.getElementById('cookieBanner');
+  const btn = document.getElementById('acceptCookies');
+
+  // 👇 comprovem si ja s’ha acceptat
+  const accepted = localStorage.getItem('cookiesAccepted');
+  if (accepted === 'true') {
+    banner.style.display = 'none';
+    return;
+  }
+
+  // 👇 si no s’ha acceptat encara
+  banner.style.display = 'block';
+
+  btn.addEventListener('click', () => {
+    localStorage.setItem('cookiesAccepted', 'true');
+    banner.remove();
+  });
+});
+</script>
+
+</body>
+</html>

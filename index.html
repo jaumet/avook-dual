@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Audiovook Dual — Aprèn llengües escoltant històries</title>
+<link rel="stylesheet" href="./css/index.css">
+
+<style>
+
+</style>
+</head>
+
+<body class="dark">
+<header>
+  <a href="https://audiovook.com/dual/" style="display:flex;align-items:center;gap:.6em;text-decoration:none;color:inherit">
+    <img src="./imgs/logo-dual-fons-blau.png" alt="Audiovook Dual logo"/> 
+    <h2>Dual</h2>&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<h5>by Audiovook</h5> 
+    <img style="height:20px !important; width:auto;" src="./imgs/logo.png" alt="Audiovook logo"/>
+  </a>
+  <div class="rightBtns">
+    <button id="themeBtn">☀️ Clar</button>
+    <button id="infoBtn">❓ Ajuda</button>
+  </div>
+</header>
+
+<main>
+<h3>ℹ️ Què és Audiovook Dual?</h3>
+  <p>
+    Audiovook Dual és una col·lecció d’audiorelats bilingües que et permet escoltar una mateixa història en dues llengües.
+    És una forma d’aprendre jugant amb el so, la repetició i el context.
+  </p>
+  <h2 style="text-align:center">📚 Relats disponibles</h2>
+
+ <!-- Botons de nivell -->
+<h3 style="text-align:center">Selecciona nivell:</h3>  <section id="levelSection"></section>
+
+<!-- Botó per mostrar/ocultar filtres -->
+<div id="advancedSearchToggle">
+  <button id="toggleFiltersBtn">🔍 Cerca avançada</button>
+</div>
+
+<!-- Barra de filtres (oculta per defecte) -->
+<section id="filtersBar" style="display:none;">
+  <div class="av-input">
+    <input type="text" id="searchInput" placeholder="🔍 Cerca per text o títol..." />
+  </div>
+  <div class="av-select" data-placeholder="Col·lecció">
+    <label>Col·lecció</label>
+    <select id="filterColection"></select>
+  </div>
+  <div class="av-select" data-placeholder="Durada">
+    <label>Durada</label>
+    <select id="filterDuration"></select>
+  </div>
+  <div class="av-select" data-placeholder="Llengües">
+    <label>Llengües</label>
+    <select id="filterLang"></select>
+  </div>
+  <div class="av-select" data-placeholder="Edats">
+    <label>Edats</label>
+    <select id="filterAges"></select>
+  </div>
+</section>
+
+ 
+  <!-- Missatge inicial -->
+  <div id="helpNote">
+    <h3 style="text-align:center">Dual en 3 clics:</h3>
+    <p>1️⃣ Selecciona quin tipus de textos vols<br>
+       2️⃣ Tria un relat<br>
+       3️⃣ Aniràs al reproductor i podràs experimentar el sistema Dual</p>
+  </div>
+
+  <section id="catalog"></section>
+  <div id="helpIcon">❔</div>
+</main>
+
+<!-- Modal ajuda -->
+<div id="infoModal">
+  <div id="infoContent">
+
+  <p>
+    Selecciona una llengua principal i una secundària, ajusta la velocitat i gaudeix de la història. 
+    Pots alternar l’ordre de les llengües o escoltar només una versió.
+  </p>
+
+  <hr style="margin:1em 0;border:none;border-top:1px solid var(--accent,#f7836a);">
+
+  <h3>🟢 Consells per gaudir i aprendre</h3>
+
+  <ul style="line-height:1.6;">
+    <li><b>🎵 Escolta com si fos música:</b><br>
+    No cal entendre cada paraula ni traduir mentalment. Deixa’t portar pel ritme, la melodia i les pauses de la veu. Repetint escoltes, el significat apareixerà de manera intuïtiva.</li>
+
+    <li><b>🔁 Juga amb l’ordre de les llengües:</b><br>
+    Pots començar escoltant primer la teva llengua i després la nova, després al contrari, i finalment només la nova. Cada ordre activa parts diferents del cervell i reforça la comprensió.</li>
+
+    <li><b>🗣️ Llegeix i escolta:</b><br>
+    Aprofita que veus el text per llegir-lo alhora que l’escoltes. Compara la pronunciació i el ritme de la veu amb la teva lectura. Escriu o repeteix els fragments que més t’agradin: és una manera excel·lent de fixar vocabulari i estructura.</li>
+
+    <li><b>⚙️ Ajusta la velocitat:</b><br>
+    Si et costa seguir, redueix la velocitat fins que reconeguis paraules i patrons. Quan et sentis més segur, accelera fins al ritme natural de la parla.</li>
+
+    <li><b>🎧 Escolta amb auriculars:</b><br>
+    Et permetrà captar millor la pronunciació, la musicalitat i els detalls de la veu. Si pots, utilitza uns auriculars tancats que aïllin el soroll exterior.</li>
+
+    <li><b>👁️ Imagina el relat:</b><br>
+    Tanca els ulls i visualitza el que passa. Imaginar reforça la memòria i et connecta emocionalment amb el llenguatge.</li>
+
+    <li><b>📖 Repassa el vocabulari:</b><br>
+    Després d’escoltar, intenta recordar paraules o frases noves. No cal apuntar-ho tot: tria les que t’hagin cridat més l’atenció.</li>
+
+    <li><b>⏳ Torna-hi més endavant:</b><br>
+    Cada escolta t’aporta coses noves i consolida l’aprenentatge sense pressa. L’aprenentatge auditiu millora quan hi ha repeticions espaiades en el temps.</li>
+
+    <li><b>🌍 Gaudeix de la diversitat:</b><br>
+    Cada història i cada veu provenen d’una cultura diferent. Deixa’t sorprendre per les expressions, els accents i les formes de dir les coses.</li>
+  </ul>
+
+  <p><b>Recorda:</b> aprendre una llengua és una experiència auditiva i emocional. 
+  Amb Audiovook Dual, pots aprendre escoltant històries, sense pressió i amb plaer.</p>
+
+
+    <button id="closeModal">Tanca</button>
+  </div>
+</div>
+
+<script>
+async function loadCatalog(){
+  const res = await fetch('./audios.json');
+  const data = await res.json();
+  const base = data.AUDIOS;
+  const catalog = document.getElementById('catalog');
+  catalog.innerHTML = '';
+  catalog.style.display = 'none';
+
+  for (const title in base) {
+    const i = base[title];
+    const img = resolveImagePath(i.image, title);
+    const human = i["title-human"] || title;
+
+    // Només afegim si el valor existeix i no és buit
+    const colection = i.colection && i.colection.trim() !== "" ? `<span class="colection">${i.colection}</span>` : "";
+    const levels    = i.levels && i.levels.trim() !== ""       ? `<span class="level">${i.levels}</span>` : "";
+    const ages      = i.ages && i.ages.trim() !== ""           ? `<span class="ages">${i.ages}</span>` : "";
+    const duration  = i.duration && i.duration.trim() !== ""   ? `<span class="duration">${i.duration}</span>` : "";
+    const langs     = i.langs && i.langs.trim() !== ""         ? `<div class="langList">${i.langs}</div>` : "";
+    const desc      = i.description && i.description.trim() !== "" ? `<div class="description">${i.description}</div>` : "";
+
+    const metaTop = (levels || ages)
+      ? `<div class="meta-top">${levels}${ages}</div>`
+      : "";
+
+    const meta = (colection || duration)
+      ? `<div class="meta">${colection}${duration}</div>`
+      : "";
+
+    const card = document.createElement('div');
+    card.className = 'titleCard';
+    card.innerHTML = `
+      <img src="${img}" alt="${human}">
+      ${metaTop}
+      <div class="cardText">
+        <h3>${human}</h3>
+        ${meta}
+        ${langs}
+        ${desc}
+      </div>
+    `;
+    card.onclick = () => {
+      window.location.href = `./player.html?title=${encodeURIComponent(title)}`;
+    };
+    catalog.appendChild(card);
+  }
+
+  initFilters(data);
+}
+
+const filters = { text:'', colection:'', levels:[], duration:'', lang:'', ages:'' };
+
+function fillSelect(id,set){
+  const sel=document.querySelector(id);
+  if(!sel)return;
+  const opt0=document.createElement('option');
+  opt0.value=''; opt0.textContent='—';
+  sel.appendChild(opt0);
+  [...set].sort().forEach(v=>{
+    const opt=document.createElement('option');
+    opt.value=v; opt.textContent=v;
+    sel.appendChild(opt);
+  });
+}
+
+async function initFilters(data){
+  const base = data.AUDIOS;
+
+  // definim conjunts
+  const colSet = new Set();
+  const levSet = new Set();
+  const durSet = new Set();
+  const langSet = new Set();
+  const ageSet = new Set();
+
+  // recollim valors dels camps
+  for(const t in base){
+    const i = base[t];
+    if(i.colection) colSet.add(i.colection.trim());
+    if(i.levels) levSet.add(i.levels.trim());
+    if(i.duration) durSet.add(i.duration.trim());
+    if(i.ages) ageSet.add(i.ages.trim());
+    if(i.langs) i.langs.split(',').map(x=>x.trim().toUpperCase()).forEach(l=>langSet.add(l));
+  }
+
+  // omplim desplegables
+  fillSelect('#filterColection', colSet);
+  fillSelect('#filterDuration',  durSet);
+  fillSelect('#filterLang',      langSet);
+  fillSelect('#filterAges',      ageSet);
+
+  // creem botons de nivell
+  const levelSection = document.getElementById('levelSection');
+  levelSection.innerHTML = '';
+  [...levSet].sort().forEach(l=>{
+    const btn = document.createElement('button');
+    btn.className = 'levelBtn';
+    btn.textContent = l;
+    btn.onclick = () => {
+      btn.classList.toggle('active');
+      if (btn.classList.contains('active')) {
+        if (!filters.levels.includes(l)) filters.levels.push(l);
+      } else {
+        filters.levels = filters.levels.filter(x=>x!==l);
+      }
+      applyFilters();
+    };
+    levelSection.appendChild(btn);
+  });
+
+  // ✅ actualitzem visualment els selects
+  setupFakeSelects();
+}
+
+function applyFilters(){
+  const cards = document.querySelectorAll('#catalog .titleCard');
+  let anyVisible = false;
+
+  const anyFilterActive =
+    (filters.text && filters.text.length > 0) ||
+    (filters.levels && filters.levels.length > 0) ||
+    filters.colection || filters.duration || filters.lang || filters.ages;
+
+  cards.forEach(card => {
+    const txt = card.textContent.toLowerCase();
+
+    // llegim dades específiques del card
+    const cardLevel = card.querySelector('.level')?.textContent.trim().toLowerCase() || '';
+    const cardLangs = (card.querySelector('.langList')?.textContent || '')
+      .replace('🌐 Llengües:', '')
+      .split(/[,\s]+/)
+      .map(l => l.trim().toUpperCase())
+      .filter(Boolean);
+
+    let visible = true;
+    if (!anyFilterActive) visible = false;
+
+    // text
+    if (visible && filters.text && !txt.includes(filters.text)) visible = false;
+
+    // nivells (OR)
+    if (visible && filters.levels.length > 0) {
+      const wanted = filters.levels.map(l => l.toLowerCase());
+      if (!wanted.includes(cardLevel)) visible = false;
+    }
+
+    // llengües (exact match)
+    if (visible && filters.lang) {
+      const wantedLang = filters.lang.trim().toUpperCase();
+      if (!cardLangs.includes(wantedLang)) visible = false;
+    }
+
+    // altres dropdowns (AND)
+    if (visible && filters.colection && !txt.includes(filters.colection.toLowerCase())) visible = false;
+    if (visible && filters.duration && !txt.includes(filters.duration.toLowerCase())) visible = false;
+    if (visible && filters.ages && !txt.includes(filters.ages.toLowerCase())) visible = false;
+
+    card.style.display = visible ? 'flex' : 'none';
+    if (visible) anyVisible = true;
+  });
+
+  // mostrar o amagar elements
+  const catalog = document.getElementById('catalog');
+  const help = document.getElementById('helpNote');
+  const helpIcon = document.getElementById('helpIcon');
+
+  catalog.style.display = anyVisible ? 'flex' : 'none';
+  help.style.display = anyVisible ? 'none' : 'block';
+  helpIcon.style.display = anyVisible ? 'flex' : 'none';
+}
+
+
+
+function resolveImagePath(imgPath,title){
+  if(!imgPath) return `./AUDIOS/${title}/${title}.png`;
+  if(/^https?:\/\//i.test(imgPath)) return imgPath;
+  return `./AUDIOS/${title}/${imgPath.replace(/^\.?\/*/,'')}`;
+}
+
+const modal=document.getElementById('infoModal');
+document.getElementById('infoBtn').onclick=()=>modal.style.display='flex';
+document.getElementById('helpIcon').onclick=()=>modal.style.display='flex';
+document.getElementById('closeModal').onclick=()=>modal.style.display='none';
+window.onclick=e=>{if(e.target==modal)modal.style.display='none';};
+
+// ✅ Cerca per text
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'searchInput') {
+    filters.text = e.target.value.trim().toLowerCase();
+    applyFilters();
+  }
+});
+
+// ✅ Dropdowns (Col·lecció, Durada, Llengües, Edats)
+document.addEventListener('change', (e) => {
+  if (e.target.matches('#filterColection, #filterDuration, #filterLang, #filterAges')) {
+    const key = e.target.id.replace('filter', '').toLowerCase(); // colection, duration, lang, ages
+    filters[key] = e.target.value || '';
+    applyFilters();
+  }
+});
+
+function setupFakeSelects(){
+  document.querySelectorAll('#filtersBar .av-select select').forEach(sel=>{
+    const wrap = sel.parentElement;
+    const setLabel = () => {
+      const idx = sel.selectedIndex;
+      const txt = idx >= 0 ? sel.options[idx].text : '';
+      wrap.setAttribute('data-value', txt);
+      // opcional: placeholder gris si és la 1a opció
+      if (idx === 0) sel.style.color = '#999'; else sel.style.color = '';
+    };
+    sel.addEventListener('change', setLabel);
+    setLabel();
+  });
+}
+
+loadCatalog();
+
+// ✅ Mostrar / ocultar filtres avançats
+document.getElementById('toggleFiltersBtn').addEventListener('click', () => {
+  const filters = document.getElementById('filtersBar');
+  const btn = document.getElementById('toggleFiltersBtn');
+  const visible = filters.style.display !== 'none';
+  filters.style.display = visible ? 'none' : 'flex';
+  btn.textContent = visible ? '🔍 Cerca avançada' : '✖️ Amaga filtres';
+});
+
+</script>
+</body>
+</html>

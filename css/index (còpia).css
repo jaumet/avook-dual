@@ -1,0 +1,590 @@
+:root {
+  --bg:#0d0e37;
+  --fg:#f5f5f7;
+  --panel-bg:#18194a;
+  --panel-fg:#fff;
+  --accent:#f7836a;
+  --header-bg:#0d0e37;
+}
+
+body.light {
+  --bg:#f5f5f7;
+  --fg:#222;
+  --panel-bg:#fff;
+  --panel-fg:#222;
+  --accent:#0d0e37;
+  --header-bg:#0d0e37;
+}
+
+body {
+  font-family:"DejaVu Sans",system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--fg);
+  margin:0;
+  transition:background .3s,color .3s;
+}
+
+header {
+  background:var(--header-bg);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:.8em 1em;
+}
+
+header a {
+  display:flex;
+  align-items:center;
+  gap:.6em;
+  text-decoration:none;
+  color:inherit;
+}
+
+header img {height:40px;}
+
+header h1 {
+  margin:0;
+  font-size:1.2em;
+  color:#fff;
+}
+
+header .rightBtns {
+  display:flex;
+  align-items:center;
+  gap:.6em;
+}
+
+header button {
+  background:#fff;
+  color:var(--accent);
+  border:0;
+  border-radius:6px;
+  padding:.4em .8em;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+header button:hover {opacity:.9;}
+
+main {
+  max-width:980px;
+  margin:0 auto;
+  padding:1.2em;
+}
+
+#intro {
+  background:var(--panel-bg);
+  color:var(--panel-fg);
+  border:2px solid var(--accent);
+  border-radius:10px;
+  padding:1em;
+  margin-bottom:1em;
+}
+
+h2,h3 {color:var(--accent);}
+#intro p {line-height:1.5;}
+
+#catalog {
+  display:flex;
+  flex-direction:column;
+  gap:1em;
+}
+
+/* === Targetes === */
+.titleCard {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:flex-start;
+  background:var(--panel-bg);
+  color:var(--panel-fg);
+  border:3px solid var(--accent);
+  border-radius:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,.2);
+  width:100%;
+  padding:1em;
+  position:relative;
+  text-align:left;
+  cursor:pointer;
+  transition:transform .2s,box-shadow .2s;
+}
+
+.titleCard:hover {
+  transform:translateY(-3px);
+  box-shadow:0 4px 10px rgba(0,0,0,.3);
+}
+
+.titleCard img {
+  width:90px;
+  height:auto;
+  max-height:90px;
+  border-radius:8px;
+  object-fit:contain;
+  margin-right:.8em;
+  margin-bottom:.4em;
+}
+
+.cardText {
+  flex:1;
+  min-width:200px;
+  text-align:left;
+  line-height:1.4;
+}
+
+.meta-top {
+  position:absolute;
+  top:6px;
+  right:8px;
+  text-align:right;
+  font-size:.85em;
+  line-height:1.2;
+}
+
+.meta-top span {
+  display:block;
+  background:var(--accent);
+  color:#fff;
+  padding:2px 6px;
+  border-radius:6px;
+  margin-bottom:4px;
+  font-weight:bold;
+}
+
+.meta {
+  font-size:.85em;
+  margin-top:.4em;
+  line-height:1.3;
+  color:#ddd;
+}
+
+.meta span {display:inline-block;margin-right:.8em;}
+.colection {font-weight:bold;color:var(--accent);}
+.langList {font-weight:bold;color:var(--accent);margin-top:.4em;}
+.description {font-size:.9em;line-height:1.4;margin-top:.3em;color:var(--panel-fg);}
+
+/* === Barra de filtres === */
+#filtersBar {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:.6em;
+  background:var(--panel-bg);
+  border:0px solid var(--accent);
+  border-radius:10px;
+  padding:.6em;
+  margin:1em auto;
+  max-width:900px;
+  box-shadow:0 2px 6px rgba(0,0,0,.2);
+}
+
+#filtersBar input,
+#filtersBar select {
+  background:var(--panel-bg);
+  color:var(--panel-fg);
+  border:none;
+  border-radius:6px;
+  padding:.6em .6em;
+  font-size:.95em;
+  min-width:130px;
+  flex:1 1 120px;
+}
+
+#filtersBar input:focus,
+#filtersBar select:focus {
+  outline:none;
+  box-shadow:0 0 6px var(--accent);
+}
+
+/* === Consells === */
+#tips h3 {margin-top:50px;}
+#tipsList {list-style:none;padding:0;margin:0;}
+#tipsList li {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin:.8em 0;
+  background:var(--panel-bg);
+  color:var(--panel-fg);
+  border-left:6px solid var(--accent);
+  border-radius:8px;
+  padding:.8em 1em;
+}
+.tipText {flex:1;padding-right:.5em;}
+.tipIcon {font-size:1.4em;margin-left:.3em;opacity:.85;}
+
+/* === Modal ajuda === */
+#infoModal {
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  z-index:999;
+  align-items:center;
+  justify-content:center;
+}
+
+#infoContent {
+  background:var(--panel-bg);
+  color:var(--panel-fg);
+  border:2px solid var(--accent);
+  border-radius:10px;
+  max-width:600px;
+  width:90%;
+  max-height:80vh;
+  overflow-y:auto;
+  padding:1.4em;
+  box-shadow:0 4px 12px rgba(0,0,0,.5);
+  scrollbar-color:var(--accent) var(--panel-bg);
+  scrollbar-width:thin;
+}
+
+#closeModal {
+  background:var(--accent);
+  color:#fff;
+  border:0;
+  border-radius:6px;
+  padding:.4em .8em;
+  cursor:pointer;
+  margin-top:.8em;
+}
+
+/* === Responsive === */
+@media (max-width:640px) {
+  .titleCard {
+    flex-direction:row;
+    align-items:flex-start;
+    text-align:left;
+  }
+  .titleCard img {
+    width:80px;
+    margin-right:.8em;
+  }
+  .meta-top {
+    font-size:.8em;
+    top:4px;
+    right:6px;
+  }
+  #filtersBar {
+    flex-direction:column;
+    align-items:stretch;
+  }
+  #filtersBar input,
+  #filtersBar select{
+    padding:.45em .6em;   /* abans .6em .6em */
+    font-size:.9em;       /* una mica més petit */
+    line-height:1.2;      /* redueix l'alçada visual */
+    min-height:36px;      /* límit superior d'alçada */
+    border-radius:6px;
+  }
+
+  /* (Opcional) iOS/Safari: evita que el select s'engrandeixi */
+  #filtersBar select{
+    -webkit-appearance:none;
+    appearance:none;
+    background-image:none; /* manté la fletxa nativa d’Android/Firefox; a iOS desapareix */
+  }
+}
+
+@media (max-width:640px){
+  #filtersBar input,
+  #filtersBar select{
+    height:36px !important;       /* força alçada */
+    min-height:0 !important;       /* anul·la min-height anterior */
+    padding:0 .6em !important;     /* treu padding vertical */
+    line-height:36px !important;   /* centra el text verticalment */
+    font-size:.95em !important;
+    box-sizing:border-box;
+  }
+
+  /* Evita el “look” inflat d’iOS i elimina la fletxa nativa per controlar el padding */
+  #filtersBar select{
+    -webkit-appearance:none !important;
+    appearance:none !important;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%23f7836a' d='M1 0l4 4 4-4 1 1-5 5L0 1z'/></svg>");
+    background-repeat:no-repeat;
+    background-position:right .6em center;
+    background-size:10px 6px;
+    padding-right:2em !important;  /* espai per a la fletxa */
+  }
+}
+/* Compacta selects/inputs al mòbil, incloent Firefox */
+@media (max-width:640px){
+  #filtersBar input,
+  #filtersBar select{
+    appearance:none !important;
+    -webkit-appearance:none !important;
+    -moz-appearance:none !important; /* Firefox */
+    height:32px !important;
+    line-height:32px !important;
+    min-height:0 !important;
+    padding:0 .7em !important;
+    font-size:.9em !important;
+    box-sizing:border-box;
+    border-radius:6px;
+  }
+  /* Fletxa pròpia (substitueix la nativa) */
+  #filtersBar select{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%23f7836a' d='M1 0l4 4 4-4 1 1-5 5L0 1z'/></svg>");
+    background-repeat:no-repeat;
+    background-position:right .6em center;
+    background-size:10px 6px;
+    padding-right:2em !important;
+  }
+}
+@media (max-width:640px){
+  /* Escala lleu per combatre el mínim de widget nadiu a Firefox Android */
+  #filtersBar select,
+  #filtersBar input{
+    transform:scale(.92);
+    transform-origin:left center;
+  }
+  /* Compensa l’espai després d’escalar */
+  #filtersBar{gap:.3em;}
+}
+/* --- Compacta filtres al mòbil (força de debò) --- */
+@media (max-width:640px){
+  /* Contenidor més compacte */
+  #filtersBar{gap:.35em !important; padding:.4em !important;}
+
+  /* Força estil propi dels camps */
+  #filtersBar input,
+  #filtersBar select{
+    appearance:none !important;
+    -webkit-appearance:none !important;
+    -moz-appearance:none !important;
+    height:28px !important;          /* alçada real */
+    line-height:28px !important;
+    min-height:0 !important;
+    padding:0 .55em !important;       /* sense padding vertical */
+    font-size:.85em !important;
+    box-sizing:border-box;
+    border-radius:6px;
+  }
+
+  /* Escala visual extra (Chrome i Firefox Android) */
+  #filtersBar input,
+  #filtersBar select{
+    transform:scale(.82) !important;  /* redueix encara més */
+    transform-origin:left center !important;
+    margin-right:-.3em !important;    /* compensa escala en layout */
+  }
+
+  /* Fletxa pròpia del select (substitueix la nativa) */
+  #filtersBar select{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%23f7836a' d='M1 0l4 4 4-4 1 1-5 5L0 1z'/></svg>");
+    background-repeat:no-repeat;
+    background-position:right .5em center;
+    background-size:10px 6px;
+    padding-right:1.8em !important;
+  }
+
+  /* Evita creixements per focus/zoom */
+  input, select { -webkit-text-size-adjust:100% !important; }
+}
+/* --- DROP-DOWNS COMPACTES AL MÒBIL (CLIP + SCALE) --- */
+@media (max-width:640px){
+  /* 1) Contenidor de cada control: talla l'alçada real */
+  #filtersBar > *{
+    display:block;
+    height:34px !important;       /* alçada visual final */
+    overflow:hidden !important;   /* clipeja el control nadiu */
+    border-radius:8px !important;
+  }
+
+  /* 2) Control nadiu: força estil i redueix visualment */
+  #filtersBar input,
+  #filtersBar select{
+    appearance:none !important;
+    -webkit-appearance:none !important;
+    -moz-appearance:none !important;
+    height:38px !important;        /* pot ser més alt; el contenidor el clipeja */
+    line-height:34px !important;
+    padding:0 .6em !important;     /* sense padding vertical */
+    font-size:.95em !important;
+    box-sizing:border-box;
+    background-color:var(--panel-bg) !important;
+    border:none !important;
+    transform:scale(.90) translateY(-2px); /* fa que càpiga dins els 34px */
+    transform-origin:left top;
+  }
+
+  /* 3) Fletxa custom perquè no depengui de la nativa */
+  #filtersBar select{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%23f7836a' d='M1 0l4 4 4-4 1 1-5 5L0 1z'/></svg>");
+    background-repeat:no-repeat;
+    background-position:right .55em center;
+    background-size:10px 6px;
+    padding-right:1.8em !important;
+  }
+
+  /* 4) Ajust general de la barra en mòbil */
+  #filtersBar{gap:.4em !important; padding:.5em !important;}
+  #filtersBar option{font-size:1em;}
+}
+/* Compact, accessible filters — small height everywhere */
+#filtersBar{display:flex;flex-wrap:wrap;justify-content:center;gap:.6em;background:var(--panel-bg);border:0;border-radius:10px;padding:.6em;margin:1em auto;max-width:900px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+#filtersBar .av-input,#filtersBar .av-select{position:relative;flex:1 1 120px;min-width:130px;height:36px;border-radius:8px;background:var(--panel-bg);box-shadow:inset 0 0 0 1px var(--accent)}
+#filtersBar .av-input input{position:absolute;inset:0;width:100%;height:100%;padding:0 .8em;border:0;background:transparent;color:var(--panel-fg);font-size:.95em;line-height:36px;box-sizing:border-box}
+#filtersBar .av-input input:focus{outline:none;box-shadow:0 0 6px var(--accent)}
+
+#filtersBar .av-select::before{content:attr(data-value);position:absolute;left:.8em;top:0;height:36px;line-height:36px;color:var(--panel-fg);pointer-events:none}
+#filtersBar .av-select::after{content:"";position:absolute;right:.6em;top:50%;width:10px;height:6px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%23f7836a' d='M1 0l4 4 4-4 1 1-5 5L0 1z'/></svg>");background-repeat:no-repeat;background-size:10px 6px;transform:translateY(-50%);pointer-events:none}
+
+#filtersBar .av-select select{position:absolute;inset:0;width:100%;height:100%;opacity:0;appearance:none;-webkit-appearance:none;-moz-appearance:none;border:0;background:transparent;cursor:pointer}
+#filtersBar .av-select select:focus{outline:none}
+
+/* Mobile tweaks (keeps 36px height) */
+@media (max-width:640px){
+  #filtersBar{gap:.45em;padding:.5em}
+  #filtersBar .av-input,#filtersBar .av-select{height:34px}
+  #filtersBar .av-input input{line-height:34px}
+  #filtersBar .av-select::before{height:34px;line-height:34px}
+}
+  #cookieBanner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--panel-bg);
+  color: var(--panel-fg);
+  border-top: 2px solid var(--accent);
+  padding: .8em;
+  text-align: center;
+  font-size: .9em;
+  z-index: 9999;
+}
+#cookieBanner p { margin: 0 0 .6em 0; }
+#cookieBanner a { color: var(--accent); text-decoration: underline; }
+#cookieBanner button {
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  padding: .4em .8em;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.levelBtn {
+  background-color: #0d0e37;       /* blau corporatiu fosc */
+  color: #fff;
+  border: 2px solid #f7836a;       /* vora taronja corporativa */
+  border-radius: 8px;
+  padding: 0.6em 1.4em;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: transform 0.1s ease, background 0.2s ease, border 0.2s ease;
+}
+.levelBtn:hover {
+  transform: scale(1.05);
+  background-color: #1a1c60;       /* blau una mica més clar */
+  border-color: #ff9d80;           /* vora més clara al hover */
+}
+.levelBtn.active {
+  background-color: #f7836a;       /* fons taronja quan actiu */
+  border-color: #f7836a;
+  color: #fff;
+}
+
+/* Icona d’ajuda */
+#helpIcon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: #0d0e37;
+  color: white;
+  font-size: 1.5em;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease;
+  z-index: 1000;
+}
+#helpIcon:hover { transform: scale(1.1); }
+
+/* Labels moderns sobre els selects */
+.av-select {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.av-select label {
+  font-size: 0.8em;
+  color: #aaa;
+  margin-bottom: 0.2em;
+}
+#filtersBar select {
+  color: var(--panel-fg, #fff);
+  background: var(--panel-bg, #222);
+  border-radius: 8px;
+  padding: 0.4em;
+  width: 100%;
+}
+#filtersBar {
+    display: flex;
+    flex-wrap: wrap;        /* ✅ permet saltar de línia */
+    gap: 0.6em;             /* separació entre filtres */
+    justify-content: center;
+    align-items: flex-start
+  }
+  #filtersBar .av-select {
+    max-height:46px !important;      /* límit superior d'alçada */
+    border-radius:6px;
+  }
+  #filtersBar .av-input,
+#filtersBar .av-select {
+  position: relative;
+  flex: 1 1 120px;
+  min-width: 130px;
+  max-height: 36px; /* ✅ abans height */
+  border-radius: 8px;
+  background: var(--panel-bg);
+  box-shadow: inset 0 0 0 1px var(--accent);
+  overflow: hidden; /* evita inflat del control nadiu */
+}
+
+#filtersBar select,
+#filtersBar input {
+  height: 100%;
+  line-height: 1.2;
+  padding: 0 .8em;
+  box-sizing: border-box;
+  border: 0;
+  background: transparent;
+  color: var(--panel-fg);
+  font-size: .95em;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+/* === Estils per secció de nivells i ajuda === */
+#levelSection {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6em;
+  margin: 1.2em 0;
+}
+
+
+/* Missatge d’ajuda inicial */
+#helpNote {
+  text-align: left;
+  line-height: 1.6;
+  color: var(--panel-fg, #ccc);
+  background: var(--panel-bg, rgba(0,0,0,0.2));
+  border-radius: 10px;
+  padding: 1em;
+  max-width: 600px;
+  margin: 1em auto;
+  font-size: 1em;
+}

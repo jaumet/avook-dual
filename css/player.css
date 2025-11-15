@@ -1,0 +1,178 @@
+  :root{
+    --bg:#0d0e37;
+    --fg:#f5f5f7;
+    --panel-bg:#18194a;
+    --panel-fg:#fff;
+    --accent:#f7836a;
+    --header-bg:#0d0e37;
+  }
+  body.light{
+    --bg:#f5f5f7;
+    --fg:#222;
+    --panel-bg:#fff;
+    --panel-fg:#222;
+    --accent:#0d0e37;
+    --header-bg:#0d0e37;
+  }
+  body{
+    font-family:"DejaVu Sans",system-ui,sans-serif;
+    background:var(--bg);color:var(--fg);margin:0;
+    transition:background .3s,color .3s;
+  }
+  header{
+    background:var(--header-bg);color:#fff;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:.8em 1em;
+  }
+  header a{display:flex;align-items:center;gap:.6em;text-decoration:none;color:inherit}
+  header img{height:40px}
+  header h1{margin:0;font-size:1.2em;color:#fff}
+  header .rightBtns{display:flex;align-items:center;gap:.6em}
+  header button{background:#fff;color:var(--accent);border:0;border-radius:6px;padding:.4em .8em;cursor:pointer;font-weight:bold;}
+  header button:hover{opacity:.9}
+
+  main{max-width:980px;margin:0 auto;padding:1.2em}
+  .topCard{display:flex;gap:1em;align-items:center;background:var(--panel-bg);
+    border:4px solid var(--accent);border-radius:10px;padding:1em;margin-bottom:1em;color:var(--panel-fg);}
+  .topCard img{width:auto;max-height:80px;border-radius:6px;object-fit:contain}
+  .topCard h2{margin:.1em 0 .2em 0;color:var(--panel-fg)}
+  .topCard .langs{font-weight:bold;color:var(--panel-fg)}
+
+  .panel-soft{background:var(--panel-bg);color:var(--panel-fg);
+    border:none;border-radius:10px;padding:1em;margin:.6em 0}
+  .row{display:flex;flex-wrap:wrap;gap:1em;align-items:flex-start}
+  .langBox{flex:1 1 320px;background:var(--panel-bg);color:var(--panel-fg);
+    border:4px solid var(--accent);border-radius:10px;padding:1em}
+  .radios{display:flex;gap:.8em;flex-wrap:wrap}
+  .radios label{display:flex;align-items:center;gap:.3em;border:2px solid var(--accent);
+    border-radius:20px;padding:.2em .6em;background:var(--fg);color:var(--bg);cursor:pointer}
+  select{font-size:1em;border:2px solid var(--accent);border-radius:6px;padding:.2em .4em;background:var(--panel-bg);color:var(--panel-fg)}
+
+  #modesPanel{text-align:center;margin:1em 0;}
+  #modesPanel>div:first-child{font-weight:bold;color:var(--accent);margin-bottom:.4em;}
+  #modeButtons{display:flex;flex-wrap:wrap;justify-content:center;gap:.6em;}
+  #modeButtons button{
+    background:var(--accent);color:#fff;border:0;border-radius:10px;
+    font-size:1.05em;padding:.6em 1.2em;cursor:pointer;
+    transition:background .2s,transform .1s;
+  }
+  #modeButtons button:hover{background:#191a5b;transform:scale(1.05);}
+
+  #textBox{position:relative;border:2px solid var(--accent);border-radius:10px;
+    background:var(--panel-bg);color:var(--panel-fg);padding:1em;
+    margin:.6em 0;min-height:3.2em;font-size:1.05em;font-style:italic}
+  #progressInfo{position:absolute;top:4px;right:8px;font-size:0.8em;color:#ccc;}
+  #progressBarContainer{position:absolute;bottom:0;left:0;width:100%;height:8px;background:#8884;border-radius:0 0 10px 10px;overflow:hidden;}
+  #progressBar{height:100%;width:0%;background:linear-gradient(90deg,#f7836a,#ffb27a);transition:width .3s;}
+  audio{width:100%;margin-top:.6em}
+  #backBtn{display:none;margin:1em auto 0 auto;border:0;background:var(--accent);
+    color:#fff;border-radius:8px;padding:.6em 1em;cursor:pointer}
+  #backBtn:hover{background:#191a5b}
+  #playerPanel button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:.4em .8em;cursor:pointer}
+  #playerPanel button:hover{background:#191a5b}
+
+  /* Consells */
+  #tips h3{margin-top:40px}
+  #tipsList{list-style:none;padding:0;margin:0}
+  #tipsList li{margin:.8em 0;background:var(--panel-bg);color:var(--panel-fg);
+    border-left:6px solid var(--accent);border-radius:8px;padding:.8em 1em;}
+  .tipText{flex:1;padding-right:.5em}
+  .tipIcon{font-size:1.4em;margin-right:.4em;opacity:.85}
+
+  /* Modal ajuda */
+  #infoModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.6); z-index:999; align-items:center; justify-content:center; }
+  #infoContent { background:var(--panel-bg); color:var(--panel-fg); border:2px solid var(--accent); border-radius:10px; max-width:600px; width:90%; max-height:80vh; /* 👈 alçada màxima del modal */ overflow-y:auto; /* 👈 activa scroll vertical */ padding:1.4em; box-shadow:0 4px 12px rgba(0,0,0,.5); scrollbar-color:var(--accent) var(--panel-bg); /* opcional per estètica */ scrollbar-width:thin; }
+  #closeModal { background:var(--accent); color:#fff; border:0; border-radius:6px; padding:.4em .8em; cursor:pointer; margin-top:.8em; }
+  #infoContent ul { padding-left:1.4em; line-height:1.5; } 
+  #infoContent h4 { margin-top:1em; color:var(--accent); }
+
+
+
+  @media(max-width:640px){.topCard{flex-direction:column;align-items:flex-start}
+  }
+  #cookieBanner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--panel-bg);
+  color: var(--panel-fg);
+  border-top: 2px solid var(--accent);
+  padding: .8em;
+  text-align: center;
+  font-size: .9em;
+  z-index: 9999;
+}
+#cookieBanner p { margin: 0 0 .6em 0; }
+#cookieBanner a { color: var(--accent); text-decoration: underline; }
+#cookieBanner button {
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  padding: .4em .8em;
+  cursor: pointer;
+  font-weight: bold;
+}
+/* === Text del relat === */
+#textContent {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1em;
+  line-height: 1.6;
+  margin: 1em 0;
+}
+
+/* Oculta la barra de progrés visual */
+#progressBarContainer {
+  display: none;
+}
+
+/* === Controls del reproductor === */
+#playerPanel {
+  text-align: center;
+}
+
+#playerPanel audio {
+  width: auto;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--panel-bg, #0d0e37);
+  padding: .4em;
+}
+
+/* Botons grans i rodons */
+#prevBtn,
+#nextBtn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: #0d0e37;
+  color: #fff;
+  border: 2px solid #f7836a;
+  font-size: 1.6em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .2s ease, background .2s ease;
+}
+
+#prevBtn:hover,
+#nextBtn:hover {
+  background-color: #1a1c60;
+  transform: scale(1.05);
+}
+
+/* Ajustos per al contenidor dels botons */
+#playerPanel > div[style*="display:flex"] {
+  gap: 1.2em;
+  flex-wrap: wrap;
+}
+
+/* Temps de reproducció visible i llegible */
+#progressInfo {
+  margin-top: .5em;
+  font-weight: 500;
+  color: var(--accent, #f7836a);
+}
