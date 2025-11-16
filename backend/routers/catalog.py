@@ -9,7 +9,7 @@ from ..models import User
 router = APIRouter(prefix="/catalog", tags=["catalog"])
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
-PREMIUM_PATH = ROOT_DIR / "backend" / "data" / "audios.json"
+PREMIUM_PATH = ROOT_DIR / "audios.json"
 FREE_PATH = ROOT_DIR / "audios-free.json"
 
 

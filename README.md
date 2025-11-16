@@ -23,7 +23,6 @@ Audiovook Dual now ships with a FastAPI backend that implements the secure magic
    you can keep the default SQLite `DATABASE_URL`, which FastAPI will create automatically.
 
 3. Start the API:
-
    ```bash
    uvicorn backend.app:app --reload
    ```
