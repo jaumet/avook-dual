@@ -35,6 +35,9 @@ The following routes are now available:
 - `GET /auth/magic-login?token=<RAW_TOKEN>` – validates a magic link token and returns a signed JWT. Pass `response_mode=cookie` to set the JWT inside an `HttpOnly` cookie and redirect to the configured `POST_LOGIN_REDIRECT_URL`.
 - `POST /webhooks/stripe` – consumes Stripe checkout events and grants `full_access` to matching users.
 
+- `GET /catalog/free` – returns the entries listed in `audios-free.json` for everyone (no authentication required).
+- `GET /catalog/premium` – returns the private entries stored in `audios.json` for authenticated users with `full_access`.
+
 All state is stored using SQLAlchemy models for `users` and `magic_link_tokens`, matching the schema from the documentation.
 
 ### Security hardening

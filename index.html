@@ -153,9 +153,8 @@ setupMagicLinkForm();
 handleLoginToastFromQuery();
 
 async function loadCatalog(){
-  const res = await fetch('./audios.json');
-  const data = await res.json();
-  const base = data.AUDIOS;
+  const data = await fetchCatalogIndex();
+  const base = data.AUDIOS || {};
   const catalog = document.getElementById('catalog');
   catalog.innerHTML = '';
   catalog.style.display = 'none';
@@ -202,6 +201,41 @@ async function loadCatalog(){
   initFilters(data);
 }
 
+async function fetchCatalogIndex(){
+  const loadFallback = async () => {
+    const res = await fetch('./audios.json');
+    if(!res.ok) throw new Error('No s\'ha pogut carregar el catàleg local.');
+    return res.json();
+  };
+
+  try {
+    const freeRes = await fetch(`${API_BASE_URL}/catalog/free`, { credentials: 'include' });
+    if(!freeRes.ok) throw new Error('No s\'ha pogut carregar el catàleg obert.');
+    const freeData = await freeRes.json();
+    const merged = {
+      PATH_AUDIOS: freeData.PATH_AUDIOS || '/AUDIOS/',
+      AUDIOS: { ...(freeData.AUDIOS || {}) }
+    };
+
+    try {
+      const premiumRes = await fetch(`${API_BASE_URL}/catalog/premium`, { credentials: 'include' });
+      if(premiumRes.ok){
+        const premiumData = await premiumRes.json();
+        Object.assign(merged.AUDIOS, premiumData.AUDIOS || {});
+      } else if (![401, 403].includes(premiumRes.status)) {
+        console.warn('Error carregant el catàleg premium', premiumRes.status);
+      }
+    } catch (err) {
+      console.warn('No s\'ha pogut carregar el catàleg premium.', err);
+    }
+
+    return merged;
+  } catch (error){
+    console.warn('Fent servir el catàleg inclòs al projecte.', error);
+    return loadFallback();
+  }
+}
+
 const filters = { text:'', colection:'', levels:[], duration:'', lang:'', ages:'' };
 
 function fillSelect(id,set){
@@ -218,7 +252,7 @@ function fillSelect(id,set){
 }
 
 async function initFilters(data){
-  const base = data.AUDIOS;
+  const base = data.AUDIOS || {};
 
   // definim conjunts
   const colSet = new Set();

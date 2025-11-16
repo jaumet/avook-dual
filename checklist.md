@@ -13,6 +13,8 @@
 - [x] Provide localized (Catalan/English) HTML email templates for magic link delivery.
 - [x] Offer an HttpOnly cookie + redirect response option for `GET /auth/magic-login`.
 - [x] Polish frontend UX so users can request links and handle redirects seamlessly.
+- [x] Expose `/catalog/free` and `/catalog/premium` endpoints to split open and subscriber-only stories.
+- [x] Update the catalog and player UI to consume the protected catalog automatically based on authentication state.
 
 ## TODO
 All roadmap items from the initial scope are complete. Add new entries here as future needs arise.
