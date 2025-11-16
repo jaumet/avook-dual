@@ -148,6 +148,16 @@
 </div>
 
 <script>
+const API_BASE_URL =
+  window.__AUDIOVOOK_API__ ||
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8000'
+    : 'https://api.audiovook.com');
+const AUDIO_BASE_URL =
+  window.__AUDIOVOOK_MEDIA__ ||
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8000/AUDIOS'
+    : 'https://audiovook.com/dual/AUDIOS');
 const qs=s=>document.querySelector(s),qsa=s=>[...document.querySelectorAll(s)];
 const getParam=name=>new URLSearchParams(window.location.search).get(name);
 const iso2to3=c=>({CA:'cat',EN:'eng',PT:'por',FR:'fra',IT:'ita',ES:'spa'})[c]||c.toLowerCase();
@@ -160,14 +170,45 @@ function resolveImagePath(imgPath,title){
   return`./AUDIOS/${title}/${imgPath.replace(/^\.?\/*/,'')}`;
 }
 
-async function loadIndex(){
-  const r=await fetch('./audios.json');
-  if(!r.ok)throw new Error('No s’ha pogut carregar audios.json');
-  return await r.json();
+async function fetchCatalogIndex(){
+  const loadFallback = async () => {
+    const res = await fetch('./audios.json');
+    if(!res.ok) throw new Error('No s\'ha pogut carregar audios.json');
+    return res.json();
+  };
+
+  try {
+    const freeRes = await fetch(`${API_BASE_URL}/catalog/free`, { credentials: 'include' });
+    if(!freeRes.ok) throw new Error('No s\'ha pogut carregar el catàleg públic.');
+    const freeData = await freeRes.json();
+    const merged = {
+      PATH_AUDIOS: freeData.PATH_AUDIOS || '/AUDIOS/',
+      AUDIOS: { ...(freeData.AUDIOS || {}) }
+    };
+    try {
+      const premiumRes = await fetch(`${API_BASE_URL}/catalog/premium`, { credentials: 'include' });
+      if(premiumRes.ok){
+        const premiumData = await premiumRes.json();
+        Object.assign(merged.AUDIOS, premiumData.AUDIOS || {});
+      } else if (![401,403].includes(premiumRes.status)) {
+        console.warn('No s\'ha pogut carregar el catàleg premium', premiumRes.status);
+      }
+    } catch(err){
+      console.warn('Error obtenint el catàleg premium', err);
+    }
+    return merged;
+  } catch(error){
+    console.warn('Fent servir el catàleg local', error);
+    return loadFallback();
+  }
 }
 
 function showRelat(){
-  const info=mainIndex.AUDIOS[titleName]||{};
+  const info=(mainIndex?.AUDIOS||{})[titleName];
+  if(!info){
+    showLockedState();
+    return;
+  }
   const desc=info.description||'(Sense descripció)';
   const img=resolveImagePath(info.image,titleName);
   const langs=Object.keys(info).filter(k=>k.endsWith('.json')).map(k=>k.substring(0,2));
@@ -184,6 +225,18 @@ function showRelat(){
   qs('#playerPanel').style.display='block';
   qs('#backBtn').style.display='inline-block';
   buildLangRadios();
+}
+
+function showLockedState(){
+  qs('#topInfo').style.display='flex';
+  qs('#relatTitle').textContent='Contingut restringit';
+  qs('#relatDesc').innerHTML =
+    'Aquest relat forma part del catàleg per subscriptors. Torna al <a href="./index.html">catàleg</a> i demana un enllaç màgic per accedir-hi.';
+  qs('#relatImg').src='./imgs/book-icon.png';
+  qs('#relatLangs').textContent='—';
+  qs('#setupPanel').style.display='none';
+  qs('#modesPanel').style.display='none';
+  qs('#playerPanel').style.display='none';
 }
 
 function buildLangRadios(){
@@ -252,7 +305,7 @@ function playNext(manual=false){
   qs('#textContent').textContent=item.text||'—';
   const L1=getL1(),spd1=parseFloat(qs('#speed1').value),spd2=parseFloat(qs('#speed2').value);
   const spd=item.lang===L1?spd1:spd2;
-  const src=`https://audiovook.com/dual/AUDIOS/${titleName}/${item.file.replace(/^\.?\/*/,'')}`;
+  const src=`${AUDIO_BASE_URL.replace(/\/$/,'')}/${titleName}/${item.file.replace(/^\.?\/*/,'')}`;
   audioEl.src=src;
   audioEl.playbackRate=spd;
   if(!manual)audioEl.play().catch(()=>{});
@@ -301,7 +354,7 @@ window.onclick=e=>{if(e.target==modal)modal.style.display='none';};
 
 // Inici
 (async ()=>{
-  mainIndex=await loadIndex();
+  mainIndex=await fetchCatalogIndex();
   titleName=getParam('title');
   if(!titleName)return;
   showRelat();
