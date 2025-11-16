@@ -12,6 +12,7 @@
 </head>
 
 <body class="dark">
+<div id="loginToast" class="login-toast" role="status" aria-live="polite"></div>
 <header>
   <a href="https://audiovook.com/dual/" style="display:flex;align-items:center;gap:.6em;text-decoration:none;color:inherit">
     <img src="./imgs/logo-dual-fons-blau.png" alt="Audiovook Dual logo"/> 
@@ -25,6 +26,21 @@
 </header>
 
 <main>
+
+  <section id="magicLinkPanel">
+    <h3>🔐 Accés per subscriptors</h3>
+    <p>Introdueix el teu correu i t'enviarem un enllaç màgic per iniciar sessió sense contrasenya. Funciona en català i anglès.</p>
+    <form id="magicLinkForm">
+      <label for="magicLinkEmail">Correu electrònic</label>
+      <div class="magic-input-row">
+        <input id="magicLinkEmail" name="email" type="email" required placeholder="tu@correu.com" autocomplete="email" />
+        <button type="submit">Envia'm l'enllaç</button>
+      </div>
+    </form>
+    <p id="magicLinkStatus" aria-live="polite"></p>
+    <p class="magic-link-hint">Un cop facis clic al correu, et redirigirem de nou aquí i veuràs un missatge confirmant l'accés.</p>
+  </section>
+
 <h3>ℹ️ Què és Audiovook Dual?</h3>
   <p>
     Audiovook Dual és una col·lecció d’audiorelats bilingües que et permet escoltar una mateixa història en dues llengües.
@@ -127,6 +143,15 @@
 </div>
 
 <script>
+const API_BASE_URL =
+  window.__AUDIOVOOK_API__ ||
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8000'
+    : 'https://api.audiovook.com');
+
+setupMagicLinkForm();
+handleLoginToastFromQuery();
+
 async function loadCatalog(){
   const res = await fetch('./audios.json');
   const data = await res.json();
@@ -342,6 +367,75 @@ function setupFakeSelects(){
     sel.addEventListener('change', setLabel);
     setLabel();
   });
+}
+
+function setupMagicLinkForm(){
+  const form = document.getElementById('magicLinkForm');
+  const statusEl = document.getElementById('magicLinkStatus');
+  if(!form || !statusEl) return;
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const emailInput = form.querySelector('input[name="email"]');
+    const email = emailInput?.value.trim();
+    if(!email){
+      statusEl.textContent = 'Introdueix un correu vàlid.';
+      statusEl.dataset.state = 'error';
+      return;
+    }
+
+    statusEl.textContent = 'Enviant enllaç...';
+    statusEl.dataset.state = 'loading';
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/magic-link/request`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json().catch(() => ({}));
+      if(!res.ok){
+        const detail = data.detail || 'No hem pogut enviar l\'enllaç. Torna-ho a provar més tard.';
+        throw new Error(detail);
+      }
+      const message = data.detail || 'Si el correu existeix, ja tens l\'enllaç al teu inbox.';
+      statusEl.textContent = message;
+      statusEl.dataset.state = 'success';
+      form.reset();
+      showLoginToast('Hem enviat l\'enllaç. Revisa la teva safata.', 'ok');
+    } catch (err){
+      statusEl.textContent = err.message || 'Error desconegut.';
+      statusEl.dataset.state = 'error';
+      showLoginToast('No hem pogut enviar l\'enllaç.', 'error');
+    }
+  });
+}
+
+function handleLoginToastFromQuery(){
+  const params = new URLSearchParams(window.location.search);
+  const loginStatus = params.get('login');
+  if(loginStatus === 'ok'){
+    showLoginToast('Sessió iniciada! Ja pots escoltar els relats.', 'ok');
+  } else if(loginStatus === 'error'){
+    showLoginToast('Hi ha hagut un problema amb l\'enllaç.', 'error');
+  }
+  if(loginStatus){
+    params.delete('login');
+    const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
+    window.history.replaceState({}, '', newUrl);
+  }
+}
+
+function showLoginToast(message, tone = 'ok'){
+  const toast = document.getElementById('loginToast');
+  if(!toast) return;
+  toast.textContent = message;
+  toast.classList.remove('ok', 'error');
+  toast.classList.add('visible', tone === 'error' ? 'error' : 'ok');
+  clearTimeout(showLoginToast._timer);
+  showLoginToast._timer = setTimeout(() => {
+    toast.classList.remove('visible');
+  }, 6000);
 }
 
 loadCatalog();
