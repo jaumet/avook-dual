@@ -1,6 +1,9 @@
 from datetime import datetime, timedelta, timezone
+from typing import Literal, Optional
+from urllib.parse import urlparse
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -37,6 +40,8 @@ def request_magic_link(
     if not user:
         return _GENERIC_RESPONSE
 
+    _enforce_rate_limit(db, user)
+
     raw_token = generate_magic_raw_token()
     token_hash = hash_token(raw_token)
     expires_at = datetime.now(timezone.utc) + timedelta(
@@ -59,10 +64,21 @@ def request_magic_link(
     return _GENERIC_RESPONSE
 
 
-@router.get("/magic-login", response_model=MagicLoginResponse)
+@router.get(
+    "/magic-login",
+    response_model=MagicLoginResponse,
+    responses={307: {"description": "Redirect with HttpOnly cookie"}},
+)
 def magic_login(
     token: str = Query(..., description="Raw magic link token"),
     request: Request = None,
+    response_mode: Literal["json", "cookie"] = Query(
+        "json", description="Choose between JSON response or HttpOnly cookie + redirect."
+    ),
+    redirect_to: Optional[str] = Query(
+        None,
+        description="Override redirect target when using response_mode=cookie.",
+    ),
     db: Session = Depends(get_db),
 ) -> MagicLoginResponse:
     token_hash = hash_token(token)
@@ -90,15 +106,21 @@ def magic_login(
     if not user or not user.full_access:
         raise HTTPException(status_code=403, detail="User not allowed")
 
-    if (
-        settings.enforce_magic_link_ip_match
-        and magic_link_token.created_ip
-        and request
-        and request.client
-    ):
-        current_ip = request.client.host
-        if current_ip and current_ip != magic_link_token.created_ip:
-            raise HTTPException(status_code=400, detail="Suspicious login attempt")
+    current_ip, current_ua = _extract_request_fingerprint(request)
+    ip_differs = bool(
+        magic_link_token.created_ip and current_ip and current_ip != magic_link_token.created_ip
+    )
+    ua_differs = bool(
+        magic_link_token.created_user_agent
+        and current_ua
+        and current_ua != magic_link_token.created_user_agent
+    )
+
+    if settings.enforce_magic_link_ip_match and ip_differs:
+        raise HTTPException(status_code=400, detail="Suspicious login attempt")
+
+    if settings.block_suspicious_login_attempts and ip_differs and ua_differs:
+        raise HTTPException(status_code=400, detail="Suspicious login attempt")
 
     magic_link_token.used_at = now
     db.add(magic_link_token)
@@ -106,8 +128,68 @@ def magic_login(
 
     access_token = create_access_token({"sub": str(user.id)})
 
+    if response_mode == "cookie":
+        return _build_cookie_response(access_token, redirect_to)
+
     return MagicLoginResponse(
         access_token=access_token,
         token_type="bearer",
         user=user,
     )
+
+
+def _enforce_rate_limit(db: Session, user: User) -> None:
+    window_start = datetime.now(timezone.utc) - timedelta(
+        minutes=settings.magic_link_rate_limit_window_minutes
+    )
+    recent_attempts = (
+        db.query(MagicLinkToken)
+        .filter(
+            MagicLinkToken.user_id == user.id,
+            MagicLinkToken.created_at >= window_start,
+        )
+        .count()
+    )
+    if recent_attempts >= settings.magic_link_rate_limit_max_requests:
+        raise HTTPException(
+            status_code=429,
+            detail="Too many magic link requests. Please try again later.",
+        )
+
+
+def _extract_request_fingerprint(request: Optional[Request]) -> tuple[Optional[str], Optional[str]]:
+    if not request:
+        return None, None
+    ip = request.client.host if request.client else None
+    user_agent = request.headers.get("user-agent")
+    return ip, user_agent
+
+
+def _build_cookie_response(access_token: str, redirect_to: Optional[str]):
+    target = redirect_to or settings.post_login_redirect_url
+    if not target:
+        raise HTTPException(status_code=400, detail="Missing redirect target")
+    if not _redirect_allowed(target):
+        raise HTTPException(status_code=400, detail="Redirect host not allowed")
+
+    response = RedirectResponse(url=target, status_code=307)
+    cookie_kwargs = dict(
+        httponly=True,
+        max_age=settings.jwt_expiration_minutes * 60,
+        secure=settings.auth_cookie_secure,
+        samesite=settings.auth_cookie_samesite,
+    )
+    if settings.auth_cookie_domain:
+        cookie_kwargs["domain"] = settings.auth_cookie_domain
+    response.set_cookie(key=settings.auth_cookie_name, value=access_token, **cookie_kwargs)
+    return response
+
+
+def _redirect_allowed(url: str) -> bool:
+    parsed = urlparse(url)
+    if not parsed.netloc:
+        return True  # relative URLs
+    hostname = parsed.hostname
+    if not hostname:
+        return False
+    return hostname in settings.allowed_redirect_hosts

@@ -8,10 +8,11 @@
 - [x] Build `POST /auth/magic-link/request` endpoint to generate and email tokens.
 - [x] Build `GET /auth/magic-login` endpoint to validate tokens and issue JWTs.
 - [x] Document environment variables, dependencies, and local development instructions.
+- [x] Enforce per-email rate limiting on `POST /auth/magic-link/request`.
+- [x] Expand suspicious-login heuristics (compare both IP and user-agent deltas before blocking).
+- [x] Provide localized (Catalan/English) HTML email templates for magic link delivery.
+- [x] Offer an HttpOnly cookie + redirect response option for `GET /auth/magic-login`.
+- [x] Polish frontend UX so users can request links and handle redirects seamlessly.
 
 ## TODO
-- [ ] Enforce per-email rate limiting on `POST /auth/magic-link/request`.
-- [ ] Expand suspicious-login heuristics (compare both IP and user-agent deltas before blocking).
-- [ ] Provide localized (Catalan/English) HTML email templates for magic link delivery.
-- [ ] Offer an HttpOnly cookie + redirect response option for `GET /auth/magic-login`.
-- [ ] Polish frontend UX so users can request links and handle redirects seamlessly.
+All roadmap items from the initial scope are complete. Add new entries here as future needs arise.

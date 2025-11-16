@@ -66,8 +66,9 @@ CREATE INDEX idx_magic_link_tokens_token_hash ON magic_link_tokens(token_hash);
 1. **Single use tokens** — Only valid when `used_at IS NULL`, and mark as used immediately.
 2. **Short expiration** — Set `expires_at = now() + interval '15 minutes'` (or 5/10 minutes).
 3. **Hash only** — Store `SHA-256(raw_token)` in the database, never the raw token.
-4. **Optional IP / UA checks** — Record `created_ip` and `created_user_agent` and optionally validate at consumption time.
-5. **Rate limiting per email** — e.g., no more than 5 magic links per hour per email (can be added later).
+4. **IP + UA heuristics** — Record `created_ip` and `created_user_agent` and consider both deltas when rejecting suspicious logins to avoid false positives.
+5. **Rate limiting per email** — No more than 5 magic links per hour per email (configurable via environment variables).
+6. **Localized comms** — Send bilingual (Catalan/English) HTML + text emails so users instantly recognize the login request.
 
 ## 4. Stripe webhook to grant access
 
@@ -146,7 +147,7 @@ def hash_token(raw_token: str) -> str:
 - **Success**:
   - Mark the magic link token as used.
   - Issue a JWT with the user id in `sub`.
-  - Return either JSON `{access_token, token_type, user}` or set the JWT in an `HttpOnly` cookie and redirect.
+  - Return either JSON `{access_token, token_type, user}` or set the JWT in an `HttpOnly` cookie and redirect. The redirect target is validated against an allow-list to avoid open-redirect issues, and cookies inherit configurable `SameSite`, `Secure`, and `Domain` attributes.
 
 Example JSON response handler:
 
@@ -167,4 +168,4 @@ async def magic_login(token: str = Query(...)):
 
 - Existing JWT-protected endpoints remain unchanged.
 - The only difference is how users obtain their JWTs: via the magic link flow instead of passwords.
-- Optional enhancements: email templates (Catalan / English), cookie-based login with redirect, rate limiting, and suspicious login detection using IP/UA deltas.
+- Optional enhancements now implemented: localized HTML emails, cookie-based login with redirect (including configurable cookie attributes and redirect allow-list), rate limiting, and suspicious login detection using combined IP/UA deltas. The frontend includes a polished login panel where users can request links, see status messages, and handle post-login redirects gracefully.
