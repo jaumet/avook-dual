@@ -53,11 +53,9 @@ Stop everything at any time with `docker compose down` (add `-v` if you also wan
    ```
 
    At minimum you must define `JWT_SECRET_KEY`, `FRONTEND_MAGIC_LOGIN_URL`, and `POST_LOGIN_REDIRECT_URL`. For local-only tests
-   you can keep the default SQLite `DATABASE_URL=sqlite:///./audiovook.db`, which FastAPI will create automatically inside the
-   `backend/` folder.
+   you can keep the default SQLite `DATABASE_URL`, which FastAPI will create automatically.
 
 3. Start the API:
-
    ```bash
    uvicorn backend.app:app --reload
    ```
@@ -73,7 +71,7 @@ The following routes are now available (they are the same whether you run locall
 
 All state is stored using SQLAlchemy models for `users` and `magic_link_tokens`, matching the schema from the documentation.
 
-### Local end-to-end walkthrough (without Docker)
+### Local end-to-end walkthrough
 
 Follow these steps to see the full flow (database, email-free magic link, cookies, and catalog protection) from your browser:
 
@@ -103,8 +101,7 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
 
 4. **Serve the frontend**
 
-   From the repository root, start a static server so the browser can load `index.html` and the `AUDIOS/` assets (skip this if
-   you already started the frontend container):
+   From the repository root, start a static server so the browser can load `index.html` and the `AUDIOS/` assets:
 
    ```bash
    python -m http.server 6060
@@ -124,16 +121,6 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
 
 7. **Play audio locally**
    - The player automatically loads media from the same origin that served the HTML when it detects `localhost`, so hosting the repository via `python -m http.server 6060` also exposes the `AUDIOS/` directory for playback.
-
-### Email delivery & troubleshooting
-
-- **Emails while developing**: Leave `SMTP_HOST` empty (or unset) and the backend will log a fully qualified magic link instead of
-  sending mail. This is the easiest way to test locally, including when running in Docker.
-- **Database creation**: Both the manual and Docker workflows run `Base.metadata.create_all` during startup. When you use SQLite
-  the file is created automatically; with Postgres the tables are created inside the configured database.
-- **Premium catalog locked down**: Anonymous browsers only fetch `/catalog/free`, which mirrors `audios-free.json`. Authenticated
-  sessions receive `/catalog/premium` as soon as they present a valid JWT (either via the `Authorization` header or the HttpOnly
-  cookie), so the bundled premium JSON is never exposed to users without a magic link.
 
 ### Security hardening
 
