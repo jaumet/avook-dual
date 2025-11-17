@@ -133,6 +133,14 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
 
    Run `python -m backend.manage list-users` any time to inspect what is stored.
 
+   > **Docker users:** execute the same management commands inside the running
+   > container, for example:
+   >
+   > ```bash
+   > docker compose exec backend python -m backend.manage create-user you@example.com --full-access
+   > docker compose exec backend python -m backend.manage list-users
+   > ```
+
 4. **Serve the frontend**
 
    From the repository root, start a static server so the browser can load `index.html` and the `AUDIOS/` assets (skip this if
