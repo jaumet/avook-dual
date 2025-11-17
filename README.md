@@ -11,13 +11,13 @@ Audiovook Dual now ships with a FastAPI backend that implements the secure magic
    cp backend/.env.example backend/.env
    ```
 
-2. (Optional) Copy the root Compose overrides **only if** you want to pin the published ports. When `.env` is missing (or you
-   leave the variables blank) Docker Compose omits the host portion entirely, so it automatically chooses free host ports and
-   avoids the `address already in use` error.
+2. (Optional) Copy the root Compose overrides whenever you want to change the published host ports. By default the backend binds
+   to `http://localhost:8000` and the frontend to `http://localhost:6060`. If those numbers are already taken on your machine,
+   set new values inside `.env` before running Docker Compose.
 
    ```bash
    cp .env.example .env
-   # set BACKEND_PORT / FRONTEND_PORT when you want predictable URLs
+   # edit BACKEND_PORT / FRONTEND_PORT when you need different host ports
    ```
 
 3. Build and start both the FastAPI backend and the static frontend:
@@ -26,22 +26,13 @@ Audiovook Dual now ships with a FastAPI backend that implements the secure magic
    docker compose up --build
    ```
 
-   After the stack is running, ask Docker which host ports were assigned (skip this if you pinned them in `.env`):
-
-   ```bash
-   docker compose port backend 8000   # e.g. 0.0.0.0:49155
-   docker compose port frontend 80    # e.g. 0.0.0.0:49156
-   ```
-
-   Use the reported values in the browser URLs.
+   Once the containers finish booting you should be able to open `http://localhost:6060` (frontend) and `http://localhost:8000/docs`
+   (FastAPI docs). If you customized the ports via `.env`, substitute those values in your browser URLs.
 
    The compose file automatically points the backend to a SQLite database stored in the named volume `backend-data`. The file is
    created the first time the container boots, so you do not need to provision anything manually.
 
-   > **Tip:** Blank values mean Compose picks free ports for you. If you explicitly set `FRONTEND_PORT` or `BACKEND_PORT`, make
-   > sure those numbers are not already taken on your machine.
-
-3. Create or inspect subscribers directly inside the running image:
+4. Create or inspect subscribers directly inside the running image:
 
    ```bash
    docker compose run --rm backend python -m backend.manage create-user you@example.com --full-access
@@ -52,6 +43,24 @@ Audiovook Dual now ships with a FastAPI backend that implements the secure magic
    browser, append `&response_mode=cookie` if you want an HttpOnly session cookie, and the premium catalog will unlock.
 
 Stop everything at any time with `docker compose down` (add `-v` if you also want to delete the SQLite volume).
+
+### Monitoring Docker logs and ports
+
+Use the following commands whenever you need to troubleshoot container startup or watch the magic-link URLs that the backend logs
+while SMTP is disabled:
+
+```bash
+# See a live log stream for the API (press Ctrl+C to stop following)
+docker compose logs -f backend
+
+# Print the latest frontend log output
+docker compose logs frontend
+
+# Confirm which ports are bound if you customized them in .env
+docker compose ps
+docker compose port backend 8000
+docker compose port frontend 80
+```
 
 ## Manual backend quickstart
 

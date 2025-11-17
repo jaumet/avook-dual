@@ -10,7 +10,7 @@ services:
     volumes:
       - backend-data:/data
     ports:
-      - "${BACKEND_PORT:-}:8000"
+      - "${BACKEND_PORT:-8000}:8000"
 
   frontend:
     build:
@@ -19,7 +19,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "${FRONTEND_PORT:-}:80"
+      - "${FRONTEND_PORT:-6060}:80"
 
 volumes:
   backend-data:
