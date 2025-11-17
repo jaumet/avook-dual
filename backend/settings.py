@@ -2,7 +2,17 @@ import json
 from functools import lru_cache
 from typing import List, Optional
 
-from pydantic import AnyUrl, BaseSettings, Field, validator
+from pydantic import AnyUrl, BaseSettings, Field
+
+
+DEFAULT_ALLOWED_REDIRECT_HOSTS = ["audiovook.com", "localhost", "127.0.0.1"]
+DEFAULT_ALLOWED_CORS_ORIGINS = [
+    "https://audiovook.com",
+    "https://audiovook.com/dual",
+    "https://audiovook.com/dual/",
+    "http://localhost:6060",
+    "http://127.0.0.1:6060",
+]
 
 
 class Settings(BaseSettings):
@@ -65,32 +75,26 @@ class Settings(BaseSettings):
         "lax", description="SameSite mode for the authentication cookie (lax/strict/none)."
     )
     allowed_redirect_hosts: List[str] = Field(
-        default_factory=lambda: ["audiovook.com", "localhost", "127.0.0.1"],
+        default_factory=lambda: DEFAULT_ALLOWED_REDIRECT_HOSTS.copy(),
         description="List of hostnames that are allowed as redirect targets when issuing HttpOnly cookie responses.",
     )
     allowed_cors_origins: List[str] = Field(
-        default_factory=lambda: [
-            "https://audiovook.com",
-            "https://audiovook.com/dual",
-            "https://audiovook.com/dual/",
-            "http://localhost:6060",
-            "http://127.0.0.1:6060",
-        ],
+        default_factory=lambda: DEFAULT_ALLOWED_CORS_ORIGINS.copy(),
         description="Origins that may call the API with credentials for catalog and auth requests.",
     )
 
-    @validator("allowed_redirect_hosts", "allowed_cors_origins", pre=True)
-    def parse_list_env_vars(cls, value, values, field):  # type: ignore[override]
-        """Allow both JSON arrays and comma-separated strings in env vars."""
-        if value is None:
-            return value
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
 
-        if isinstance(value, str):
-            raw = value.strip()
+        @staticmethod
+        def _parse_list(raw_value: Optional[str], default: List[str]) -> List[str]:
+            if raw_value is None:
+                return default.copy()
+
+            raw = raw_value.strip()
             if not raw:
-                if field.default_factory is not None:
-                    return field.default_factory()
-                return field.default
+                return default.copy()
 
             if raw.startswith("["):
                 try:
@@ -100,13 +104,16 @@ class Settings(BaseSettings):
                 except json.JSONDecodeError:
                     pass
 
-            return [item.strip() for item in raw.split(",") if item.strip()]
+            parsed = [item.strip() for item in raw.split(",") if item.strip()]
+            return parsed or default.copy()
 
-        return value
-
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+        @classmethod
+        def parse_env_var(cls, field_name: str, raw_value: str):
+            if field_name == "allowed_redirect_hosts":
+                return cls._parse_list(raw_value, DEFAULT_ALLOWED_REDIRECT_HOSTS)
+            if field_name == "allowed_cors_origins":
+                return cls._parse_list(raw_value, DEFAULT_ALLOWED_CORS_ORIGINS)
+            return super().parse_env_var(field_name, raw_value)
 
 
 @lru_cache
