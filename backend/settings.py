@@ -16,7 +16,7 @@ DEFAULT_ALLOWED_CORS_ORIGINS = [
 
 
 class Settings(BaseSettings):
-    database_url: AnyUrl = Field(
+    database_url: str = Field(
         "sqlite:///./audiovook.db",
         description="SQLAlchemy database URL. Defaults to local SQLite for development.",
     )
