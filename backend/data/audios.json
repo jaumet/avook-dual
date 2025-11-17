@@ -11,7 +11,8 @@
       "duration": "00:02:00",
       "CA-el-mapa-de-la-biblioteca.json": "file",
       "EN-el-mapa-de-la-biblioteca.json": "file",
-      "FR-el-mapa-de-la-biblioteca.json": "file"
+      "FR-el-mapa-de-la-biblioteca.json": "file",
+      "id": "el-mapa-de-la-biblioteca"
     },
     "Trobada-a-l-exposicio": {
       "title-human": "Trobada a l'exposició",
@@ -27,7 +28,8 @@
       "ES-Trobada-a-l-exposicio.json": "file",
       "FR-Trobada-a-l-exposicio.json": "file",
       "IT-Trobada-a-l-exposicio.json": "file",
-      "PT-Trobada-a-l-exposicio.json": "file"
+      "PT-Trobada-a-l-exposicio.json": "file",
+      "id": "Trobada-a-l-exposicio"
     },
     "Reportatge-al-mercat": {
       "title-human": "Reportatge al mercat",
@@ -40,7 +42,8 @@
       "CA-Reportatge-al-mercat.json": "file",
       "EN-Reportatge-al-mercat.json": "file",
       "ES-Reportatge-al-mercat.json": "file",
-      "FR-Reportatge-al-mercat.json": "file"
+      "FR-Reportatge-al-mercat.json": "file",
+      "id": "Reportatge-al-mercat"
     },
     "titol_test": {
       "title-human": "Test curt",
@@ -52,7 +55,8 @@
       "duration": "00:00:40",
       "PT-titol_test.json": "file",
       "EN-titol_test.json": "file",
-      "CA-titol_test.json": "file"
+      "CA-titol_test.json": "file",
+      "id": "titol_test"
     },
     "0-1-Salutacions-i-emocions": {
       "title-human": "Salutacions i emocions",
@@ -61,7 +65,8 @@
       "langs": "CA, EN",
       "ages": "0-99",
       "CA-0-1-Salutacions-i-emocions.json": "file",
-      "EN-0-1-Salutacions-i-emocions.json": "file"
+      "EN-0-1-Salutacions-i-emocions.json": "file",
+      "id": "0-1-Salutacions-i-emocions"
     },
     "0-2-D-on-ets": {
       "title-human": "D on ets",
@@ -70,7 +75,8 @@
       "langs": "CA, EN",
       "ages": "0-99",
       "EN-0-2.json": "file",
-      "CA-0-2.json": "file"
+      "CA-0-2.json": "file",
+      "id": "0-2-D-on-ets"
     },
     "0-3-Bon-dia-bona-nit": {
       "title-human": "Bon dia bona nit",
@@ -79,7 +85,8 @@
       "langs": "CA, EN",
       "ages": "0-99",
       "EN-0-3.json": "file",
-      "CA-0-3.json": "file"
+      "CA-0-3.json": "file",
+      "id": "0-3-Bon-dia-bona-nit"
     },
     "0-4-A-casa-meva": {
       "title-human": "A casa meva",
@@ -88,7 +95,8 @@
       "langs": "CA, EN",
       "ages": "0-99",
       "EN-0-4.json": "file",
-      "CA-0-4.json": "file"
+      "CA-0-4.json": "file",
+      "id": "0-4-A-casa-meva"
     },
     "0-5-Relacions-i-presentacions": {
       "title-human": "Relacions i presentacions",
@@ -97,7 +105,8 @@
       "langs": "CA, EN",
       "ages": "0-99",
       "EN-0-5.json": "file",
-      "CA-0-5.json": "file"
+      "CA-0-5.json": "file",
+      "id": "0-5-Relacions-i-presentacions"
     },
     "0-6-Objectes-i-aliments": {
       "title-human": "Objectes i aliments",
@@ -106,7 +115,8 @@
       "langs": "CA, EN",
       "ages": "0-99",
       "EN-0-6.json": "file",
-      "CA-0-6.json": "file"
+      "CA-0-6.json": "file",
+      "id": "0-6-Objectes-i-aliments"
     },
     "Els-primers-pobles-del-mon": {
       "title-human": "Els primers pobles del món",
@@ -116,7 +126,8 @@
       "ages": "0-99",
       "CA-Els-primers-pobles-del-mon.json": "file",
       "ES-Els-primers-pobles-del-mon.json": "file",
-      "EN-Els-primers-pobles-del-mon.json": "file"
+      "EN-Els-primers-pobles-del-mon.json": "file",
+      "id": "Els-primers-pobles-del-mon"
     }
   }
 }
