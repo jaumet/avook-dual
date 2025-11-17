@@ -147,7 +147,7 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
 5. **Request and consume a magic link**
    - Visit <http://localhost:6060/index.html>, enter the email you created, and submit the form.
    - Because SMTP is disabled, the backend prints a log similar to:
-     `Magic link email skipped; share this URL with you@example.com for local testing: http://localhost:8000/auth/magic-login?token=XYZ`.
+     `Magic link URL for you@example.com (token=XYZ): http://localhost:8000/auth/magic-login?token=XYZ — EMAIL_ENABLED is false`.
    - Copy the URL, open it in the browser, and add `&response_mode=cookie` if you want an HttpOnly cookie plus redirect (the default redirect points to `POST_LOGIN_REDIRECT_URL`).
 
 6. **Verify catalog protection**
@@ -161,7 +161,8 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
 ### Email delivery & troubleshooting
 
 - **Emails while developing**: Set `EMAIL_ENABLED=false` or leave `SMTP_HOST` empty and the backend will log a fully qualified
-  magic link instead of sending mail. This is the easiest way to test locally, including when running in Docker.
+  magic link (email, token, and URL). When SMTP is enabled but a send fails, the backend logs the same information plus the
+  error reason, so you can always copy the login URL during development.
 - **Database creation**: Both the manual and Docker workflows run `Base.metadata.create_all` during startup. When you use SQLite
   the file is created automatically; with Postgres the tables are created inside the configured database.
 - **Premium catalog locked down**: Anonymous browsers only fetch `/catalog/free`, which mirrors `audios-free.json`. Authenticated

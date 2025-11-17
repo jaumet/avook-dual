@@ -59,7 +59,7 @@ def request_magic_link(
     db.commit()
 
     magic_link_url = f"{settings.frontend_magic_login_url}?token={raw_token}"
-    send_magic_link_email(user.email, magic_link_url)
+    send_magic_link_email(user.email, magic_link_url, raw_token)
 
     return _GENERIC_RESPONSE
 
