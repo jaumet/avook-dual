@@ -5,22 +5,22 @@ from typing import Optional, Tuple
 
 from .settings import get_settings
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("uvicorn.error")
 settings = get_settings()
 
 
-def send_magic_link_email(recipient: str, magic_link_url: str, raw_token: str) -> None:
+def send_magic_link_email(recipient: str, magic_link_url: str, raw_token: str) -> bool:
+    """Send the login email and log the URL whenever delivery is skipped."""
+
     subject, text_body, html_body = _build_magic_link_email(magic_link_url)
     email_sent, failure_reason = _send_email(recipient, subject, text_body, html_body)
 
-    if not email_sent:
-        logger.warning(
-            "Magic link URL for %s (token=%s): %s — %s",
-            recipient,
-            raw_token,
-            magic_link_url,
-            failure_reason or "email delivery skipped",
-        )
+    if email_sent:
+        logger.info("Magic link email sent to %s", recipient)
+        return True
+
+    _log_magic_link_fallback(recipient, raw_token, magic_link_url, failure_reason)
+    return False
 
 
 def _send_email(
@@ -118,3 +118,15 @@ def _build_magic_link_email(magic_link_url: str) -> tuple[str, str, str]:
     </html>
     """
     return subject, text_body, html_body
+
+
+def _log_magic_link_fallback(
+    recipient: str, raw_token: str, magic_link_url: str, failure_reason: Optional[str]
+) -> None:
+    logger.warning(
+        "Magic link URL for %s (token=%s): %s — %s",
+        recipient,
+        raw_token,
+        magic_link_url,
+        failure_reason or "email delivery skipped",
+    )
