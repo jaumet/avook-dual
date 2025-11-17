@@ -11,20 +11,34 @@ settings = get_settings()
 
 def send_magic_link_email(recipient: str, magic_link_url: str) -> None:
     subject, text_body, html_body = _build_magic_link_email(magic_link_url)
-    _send_email(recipient, subject, text_body, html_body)
+    email_sent = _send_email(recipient, subject, text_body, html_body)
+
+    if not email_sent:
+        logger.warning(
+            "Magic link email skipped; share this URL with %s for local testing: %s",
+            recipient,
+            magic_link_url,
+        )
 
 
 def _send_email(
     recipient: str, subject: str, text_body: str, html_body: Optional[str] = None
-) -> None:
-    if not settings.smtp_host:
+) -> bool:
+    if not settings.email_enabled:
         logger.info(
-            "Skipping email send because SMTP configuration is missing. Intended to send to %s with subject %s and body %s",
+            "Skipping email send because EMAIL_ENABLED is false. Intended to send to %s with subject %s",
             recipient,
             subject,
-            text_body,
         )
-        return
+        return False
+
+    if not settings.smtp_host:
+        logger.info(
+            "Skipping email send because SMTP configuration is missing. Intended to send to %s with subject %s",
+            recipient,
+            subject,
+        )
+        return False
 
     message = EmailMessage()
     message["From"] = settings.email_from_address
@@ -42,6 +56,7 @@ def _send_email(
         if settings.smtp_username and settings.smtp_password:
             smtp.login(settings.smtp_username, settings.smtp_password)
         smtp.send_message(message)
+        return True
     finally:
         if smtp:
             smtp.quit()

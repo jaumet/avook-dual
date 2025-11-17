@@ -48,6 +48,10 @@ class Settings(BaseSettings):
     email_from_address: str = Field(
         "no-reply@audiovook.com", description="Sender email used for transactional emails."
     )
+    email_enabled: bool = Field(
+        True,
+        description="Global toggle to disable outbound email (useful for local development).",
+    )
     smtp_host: Optional[str] = Field(None, description="SMTP host for sending transactional email.")
     smtp_username: Optional[str] = None
     smtp_password: Optional[str] = None

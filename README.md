@@ -4,8 +4,9 @@ Audiovook Dual now ships with a FastAPI backend that implements the secure magic
 
 ## Docker quickstart
 
-1. Copy the backend environment template and set at least `JWT_SECRET_KEY` plus the frontend URLs you want to use. You can keep
-   the SMTP fields empty for local testing—the API logs the magic link URL whenever email delivery is disabled.
+1. Copy the backend environment template and set at least `JWT_SECRET_KEY` plus the frontend URLs you want to use. Set
+   `EMAIL_ENABLED=false` (or leave the SMTP fields empty) for local testing—the API logs the magic link URL whenever email
+   delivery is disabled.
 
    ```bash
    cp backend/.env.example backend/.env
@@ -111,7 +112,8 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
    - Keep `DATABASE_URL=sqlite:///./audiovook.db` for the quickest setup; the file is created the moment the API boots.
    - Set `FRONTEND_MAGIC_LOGIN_URL=http://localhost:8000/auth/magic-login` so emails point to your local API while testing.
    - Add `POST_LOGIN_REDIRECT_URL=http://localhost:6060/index.html?login=ok` so cookie responses send you back to the local catalog.
-   - Leave the SMTP variables empty during development—the backend logs the magic link when email is disabled.
+   - Either set `EMAIL_ENABLED=false` or leave the SMTP variables empty during development—the backend logs the magic link
+     when email is disabled.
 
 2. **Run the backend**
 
@@ -144,7 +146,8 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
 
 5. **Request and consume a magic link**
    - Visit <http://localhost:6060/index.html>, enter the email you created, and submit the form.
-   - Because SMTP is disabled, the backend prints a log similar to: `Skipping email send...magic_link_login?...token=XYZ`.
+   - Because SMTP is disabled, the backend prints a log similar to:
+     `Magic link email skipped; share this URL with you@example.com for local testing: http://localhost:8000/auth/magic-login?token=XYZ`.
    - Copy the URL, open it in the browser, and add `&response_mode=cookie` if you want an HttpOnly cookie plus redirect (the default redirect points to `POST_LOGIN_REDIRECT_URL`).
 
 6. **Verify catalog protection**
@@ -157,8 +160,8 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
 
 ### Email delivery & troubleshooting
 
-- **Emails while developing**: Leave `SMTP_HOST` empty (or unset) and the backend will log a fully qualified magic link instead of
-  sending mail. This is the easiest way to test locally, including when running in Docker.
+- **Emails while developing**: Set `EMAIL_ENABLED=false` or leave `SMTP_HOST` empty and the backend will log a fully qualified
+  magic link instead of sending mail. This is the easiest way to test locally, including when running in Docker.
 - **Database creation**: Both the manual and Docker workflows run `Base.metadata.create_all` during startup. When you use SQLite
   the file is created automatically; with Postgres the tables are created inside the configured database.
 - **Premium catalog locked down**: Anonymous browsers only fetch `/catalog/free`, which mirrors `audios-free.json`. Authenticated
