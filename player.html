@@ -153,10 +153,11 @@ const API_BASE_URL =
   (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:8000'
     : 'https://api.audiovook.com');
+const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 const AUDIO_BASE_URL =
   window.__AUDIOVOOK_MEDIA__ ||
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:8000/AUDIOS'
+  (isLocalhost
+    ? `${window.location.origin}/AUDIOS`
     : 'https://audiovook.com/dual/AUDIOS');
 const qs=s=>document.querySelector(s),qsa=s=>[...document.querySelectorAll(s)];
 const getParam=name=>new URLSearchParams(window.location.search).get(name);
@@ -172,8 +173,8 @@ function resolveImagePath(imgPath,title){
 
 async function fetchCatalogIndex(){
   const loadFallback = async () => {
-    const res = await fetch('./audios.json');
-    if(!res.ok) throw new Error('No s\'ha pogut carregar audios.json');
+    const res = await fetch('./audios-free.json');
+    if(!res.ok) throw new Error('No s\'ha pogut carregar audios-free.json');
     return res.json();
   };
 

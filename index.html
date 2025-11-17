@@ -203,8 +203,8 @@ async function loadCatalog(){
 
 async function fetchCatalogIndex(){
   const loadFallback = async () => {
-    const res = await fetch('./audios.json');
-    if(!res.ok) throw new Error('No s\'ha pogut carregar el catàleg local.');
+    const res = await fetch('./audios-free.json');
+    if(!res.ok) throw new Error('No s\'ha pogut carregar el catàleg obert.');
     return res.json();
   };
 
