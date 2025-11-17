@@ -11,13 +11,13 @@ Audiovook Dual now ships with a FastAPI backend that implements the secure magic
    cp backend/.env.example backend/.env
    ```
 
-2. (Optional) Copy the root Compose overrides if you need to change the published ports (for example, when `6060` is already
-   taken on your machine). Docker Compose automatically reads `.env`, so any values defined there override the defaults in the
-   `docker-compose.yml` file.
+2. (Optional) Copy the root Compose overrides **only if** you want to pin the published ports. When `.env` is missing (or you
+   leave the variables blank) Docker Compose omits the host portion entirely, so it automatically chooses free host ports and
+   avoids the `address already in use` error.
 
    ```bash
    cp .env.example .env
-   # edit BACKEND_PORT / FRONTEND_PORT as needed
+   # set BACKEND_PORT / FRONTEND_PORT when you want predictable URLs
    ```
 
 3. Build and start both the FastAPI backend and the static frontend:
@@ -26,14 +26,20 @@ Audiovook Dual now ships with a FastAPI backend that implements the secure magic
    docker compose up --build
    ```
 
-   * Backend → <http://localhost:${BACKEND_PORT:-8000}>
-   * Frontend → <http://localhost:${FRONTEND_PORT:-6060}>
+   After the stack is running, ask Docker which host ports were assigned (skip this if you pinned them in `.env`):
+
+   ```bash
+   docker compose port backend 8000   # e.g. 0.0.0.0:49155
+   docker compose port frontend 80    # e.g. 0.0.0.0:49156
+   ```
+
+   Use the reported values in the browser URLs.
 
    The compose file automatically points the backend to a SQLite database stored in the named volume `backend-data`. The file is
    created the first time the container boots, so you do not need to provision anything manually.
 
-   > **Tip:** If `docker compose up` fails with `address already in use`, edit `.env` and set `FRONTEND_PORT` (or `BACKEND_PORT`)
-   > to an available host port before running the command again.
+   > **Tip:** Blank values mean Compose picks free ports for you. If you explicitly set `FRONTEND_PORT` or `BACKEND_PORT`, make
+   > sure those numbers are not already taken on your machine.
 
 3. Create or inspect subscribers directly inside the running image:
 
