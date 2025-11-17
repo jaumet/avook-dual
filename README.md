@@ -2,7 +2,40 @@
 
 Audiovook Dual now ships with a FastAPI backend that implements the secure magic-link flow described in `docs/magic_link_flow.md`.
 
-## Backend quickstart
+## Docker quickstart
+
+1. Copy the backend environment template and set at least `JWT_SECRET_KEY` plus the frontend URLs you want to use. You can keep
+   the SMTP fields empty for local testing—the API logs the magic link URL whenever email delivery is disabled.
+
+   ```bash
+   cp backend/.env.example backend/.env
+   ```
+
+2. Build and start both the FastAPI backend and the static frontend:
+
+   ```bash
+   docker compose up --build
+   ```
+
+   * Backend → <http://localhost:8000>
+   * Frontend → <http://localhost:6060>
+
+   The compose file automatically points the backend to a SQLite database stored in the named volume `backend-data`. The file is
+   created the first time the container boots, so you do not need to provision anything manually.
+
+3. Create or inspect subscribers directly inside the running image:
+
+   ```bash
+   docker compose run --rm backend python -m backend.manage create-user you@example.com --full-access
+   docker compose run --rm backend python -m backend.manage list-users
+   ```
+
+   After requesting a magic link from the browser you will see the login URL printed in the backend logs. Copy it into the
+   browser, append `&response_mode=cookie` if you want an HttpOnly session cookie, and the premium catalog will unlock.
+
+Stop everything at any time with `docker compose down` (add `-v` if you also want to delete the SQLite volume).
+
+## Manual backend quickstart
 
 1. Create a Python virtual environment and install dependencies:
 
@@ -27,7 +60,7 @@ Audiovook Dual now ships with a FastAPI backend that implements the secure magic
    uvicorn backend.app:app --reload
    ```
 
-The following routes are now available:
+The following routes are now available (they are the same whether you run locally or inside Docker):
 
 - `POST /auth/magic-link/request` – issues a one-time magic link token and emails it to the user.
 - `GET /auth/magic-login?token=<RAW_TOKEN>` – validates a magic link token and returns a signed JWT. Pass `response_mode=cookie` to set the JWT inside an `HttpOnly` cookie and redirect to the configured `POST_LOGIN_REDIRECT_URL`.

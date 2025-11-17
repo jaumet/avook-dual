@@ -67,6 +67,16 @@ class Settings(BaseSettings):
         default_factory=lambda: ["audiovook.com", "localhost", "127.0.0.1"],
         description="List of hostnames that are allowed as redirect targets when issuing HttpOnly cookie responses.",
     )
+    allowed_cors_origins: List[str] = Field(
+        default_factory=lambda: [
+            "https://audiovook.com",
+            "https://audiovook.com/dual",
+            "https://audiovook.com/dual/",
+            "http://localhost:6060",
+            "http://127.0.0.1:6060",
+        ],
+        description="Origins that may call the API with credentials for catalog and auth requests.",
+    )
 
     class Config:
         env_file = ".env"
