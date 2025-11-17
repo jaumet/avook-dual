@@ -1,7 +1,8 @@
+import json
 from functools import lru_cache
 from typing import List, Optional
 
-from pydantic import AnyUrl, BaseSettings, Field
+from pydantic import AnyUrl, BaseSettings, Field, validator
 
 
 class Settings(BaseSettings):
@@ -77,6 +78,31 @@ class Settings(BaseSettings):
         ],
         description="Origins that may call the API with credentials for catalog and auth requests.",
     )
+
+    @validator("allowed_redirect_hosts", "allowed_cors_origins", pre=True)
+    def parse_list_env_vars(cls, value, values, field):  # type: ignore[override]
+        """Allow both JSON arrays and comma-separated strings in env vars."""
+        if value is None:
+            return value
+
+        if isinstance(value, str):
+            raw = value.strip()
+            if not raw:
+                if field.default_factory is not None:
+                    return field.default_factory()
+                return field.default
+
+            if raw.startswith("["):
+                try:
+                    parsed = json.loads(raw)
+                    if isinstance(parsed, list):
+                        return parsed
+                except json.JSONDecodeError:
+                    pass
+
+            return [item.strip() for item in raw.split(",") if item.strip()]
+
+        return value
 
     class Config:
         env_file = ".env"

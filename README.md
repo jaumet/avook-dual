@@ -74,6 +74,9 @@ Stop everything at any time with `docker compose down` (add `-v` if you also wan
    you can keep the default SQLite `DATABASE_URL=sqlite:///./audiovook.db`, which FastAPI will create automatically inside the
    `backend/` folder.
 
+   > **Note:** List-style settings such as `ALLOWED_REDIRECT_HOSTS` and `ALLOWED_CORS_ORIGINS` accept either comma-separated
+   > values or JSON arrays. Leave the variables blank if you prefer to fall back to the built-in defaults.
+
 3. Start the API:
 
    ```bash
