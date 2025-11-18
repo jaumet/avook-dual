@@ -165,8 +165,9 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
    - Visit <http://localhost:6060/index.html>, enter the email you created, and submit the form.
    - Because SMTP is disabled, the backend prints a log similar to:
      `Magic link URL for you@example.com (token=XYZ): http://localhost:6060/auth/magic-login?token=XYZ — EMAIL_ENABLED is false`.
-  - Copy the URL, then either open it directly (adding `&response_mode=cookie` to trigger an HttpOnly cookie) **or** paste the raw token into `http://localhost:6060/auth/magic-login?token=<TOKEN>` so the frontend helper page redirects through the backend and lands you back on the catalog automatically.
-  - If your browser enforces “HTTPS-only” mode, add an exception for `http://localhost:6060` (or use `http://127.0.0.1:6060`) because the helper needs plain HTTP to talk to the FastAPI container; it now auto-falls-back to `http://localhost:6060` even when the port is stripped.
+  - Copy the URL, then either open it directly (adding `&response_mode=cookie` to trigger an HttpOnly cookie) **or** paste the raw token into `http://localhost:6060/auth/magic-login?token=<TOKEN>` so the frontend helper page redeems it for you.
+  - When the helper detects it is running over plain `http://localhost`, it automatically switches to JSON mode, stores the JWT inside `localStorage`, and then sends you back to the catalog. Both `index.html` and `player.html` now attach that token as a `Bearer` header when calling `/catalog/premium`, so you can test premium access without tweaking cookie settings.
+  - If your browser enforces “HTTPS-only” mode, add an exception for `http://localhost:6060` (or use `http://127.0.0.1:6060`) because the helper needs plain HTTP to talk to the FastAPI container; it already tries to downgrade `https://localhost` links while preserving port `:6060`.
 
 6. **Verify catalog protection**
    - Anonymous users (or fresh browsers) hit `/catalog/free` and see only the entries from `audios-free.json`.

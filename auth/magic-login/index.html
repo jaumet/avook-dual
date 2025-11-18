@@ -40,21 +40,31 @@
       return;
     }
 
+    const isLocalhost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+    const resolvedPort = window.location.port || (isLocalhost ? '6060' : '');
+    const resolvedOrigin = resolvedPort
+      ? `${window.location.protocol}//${window.location.hostname}:${resolvedPort}`
+      : window.location.origin;
+
     const API_BASE_URL =
       window.__AUDIOVOOK_API__ ||
-      (location.hostname === 'localhost' || location.hostname === '127.0.0.1'
-        ? 'http://localhost:8000'
-        : 'https://api.audiovook.com');
+      (isLocalhost ? 'http://localhost:8000' : 'https://api.audiovook.com');
 
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
-    const mode = (params.get('mode') || 'cookie').toLowerCase();
+    let mode = (params.get('mode') || 'cookie').toLowerCase();
     const redirectOverride = params.get('redirect');
-    const defaultRedirect = `${window.location.origin}/?login=ok`;
+    const defaultRedirect = `${resolvedOrigin}/?login=ok`;
     const redirectTarget = redirectOverride ? decodeURIComponent(redirectOverride) : defaultRedirect;
+    const shouldForceJson = isLocalhost && window.location.protocol === 'http:';
 
     const statusEl = document.getElementById('status');
     const debugEl = document.getElementById('debug');
+
+    if(shouldForceJson && mode === 'cookie'){
+      debugEl.textContent = 'Entorn local detectat: farem servir el mode JSON i guardarem el token.';
+      mode = 'json';
+    }
 
     if(!token){
       statusEl.textContent = 'No hem trobat cap token a l\'URL.';

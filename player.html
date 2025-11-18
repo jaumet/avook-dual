@@ -172,6 +172,8 @@ function resolveImagePath(imgPath,title){
 }
 
 async function fetchCatalogIndex(){
+  const token = localStorage.getItem('audiovook_token');
+  const authHeaders = token ? { Authorization: `Bearer ${token}` } : undefined;
   const loadFallback = async () => {
     const res = await fetch('./audios-free.json');
     if(!res.ok) throw new Error('No s\'ha pogut carregar audios-free.json');
@@ -179,7 +181,9 @@ async function fetchCatalogIndex(){
   };
 
   try {
-    const freeRes = await fetch(`${API_BASE_URL}/catalog/free`, { credentials: 'include' });
+    const freeOptions = { credentials: 'include' };
+    if(authHeaders) freeOptions.headers = authHeaders;
+    const freeRes = await fetch(`${API_BASE_URL}/catalog/free`, freeOptions);
     if(!freeRes.ok) throw new Error('No s\'ha pogut carregar el catàleg públic.');
     const freeData = await freeRes.json();
     const merged = {
@@ -187,7 +191,9 @@ async function fetchCatalogIndex(){
       AUDIOS: { ...(freeData.AUDIOS || {}) }
     };
     try {
-      const premiumRes = await fetch(`${API_BASE_URL}/catalog/premium`, { credentials: 'include' });
+      const premiumOptions = { credentials: 'include' };
+      if(authHeaders) premiumOptions.headers = authHeaders;
+      const premiumRes = await fetch(`${API_BASE_URL}/catalog/premium`, premiumOptions);
       if(premiumRes.ok){
         const premiumData = await premiumRes.json();
         Object.assign(merged.AUDIOS, premiumData.AUDIOS || {});
