@@ -29,6 +29,11 @@
     <a id="backLink" class="btn" href="/">Torna al catàleg</a>
   </div>
   <script>
+    if (window.location.protocol === 'https:' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      const downgraded = `http://${window.location.host}${window.location.pathname}${window.location.search}${window.location.hash}`;
+      window.location.replace(downgraded);
+    }
+
     const API_BASE_URL =
       window.__AUDIOVOOK_API__ ||
       (location.hostname === 'localhost' || location.hostname === '127.0.0.1'

@@ -45,7 +45,8 @@ Audiovook Dual now ships with a FastAPI backend that implements the secure magic
    After requesting a magic link from the browser you will see the login URL printed in the backend logs. Copy it into the
    browser, or paste the raw token after `http://localhost:6060/auth/magic-login?token=` and the helper page will exchange the
    token for you. Append `&response_mode=cookie` only if you hit the backend URL directly and want to force the HttpOnly cookie
-   redirect yourself.
+   redirect yourself. If you accidentally open the helper over `https://localhost`, it automatically downgrades back to
+   `http://localhost` so mixed-content restrictions never block the redirect to the FastAPI server on port 8000.
 
 Stop everything at any time with `docker compose down` (add `-v` if you also want to delete the SQLite volume).
 
