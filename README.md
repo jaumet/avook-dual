@@ -43,7 +43,9 @@ Audiovook Dual now ships with a FastAPI backend that implements the secure magic
    ```
 
    After requesting a magic link from the browser you will see the login URL printed in the backend logs. Copy it into the
-   browser, append `&response_mode=cookie` if you want an HttpOnly session cookie, and the premium catalog will unlock.
+   browser, or paste the raw token after `http://localhost:6060/auth/magic-login?token=` and the helper page will exchange the
+   token for you. Append `&response_mode=cookie` only if you hit the backend URL directly and want to force the HttpOnly cookie
+   redirect yourself.
 
 Stop everything at any time with `docker compose down` (add `-v` if you also want to delete the SQLite volume).
 
@@ -161,7 +163,7 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
    - Visit <http://localhost:6060/index.html>, enter the email you created, and submit the form.
    - Because SMTP is disabled, the backend prints a log similar to:
      `Magic link URL for you@example.com (token=XYZ): http://localhost:8000/auth/magic-login?token=XYZ — EMAIL_ENABLED is false`.
-   - Copy the URL, open it in the browser, and add `&response_mode=cookie` if you want an HttpOnly cookie plus redirect (the default redirect points to `POST_LOGIN_REDIRECT_URL`).
+   - Copy the URL, then either open it directly (adding `&response_mode=cookie` to trigger an HttpOnly cookie) **or** paste the raw token into `http://localhost:6060/auth/magic-login?token=<TOKEN>` so the frontend helper page redirects through the backend and lands you back on the catalog automatically.
 
 6. **Verify catalog protection**
    - Anonymous users (or fresh browsers) hit `/catalog/free` and see only the entries from `audios-free.json`.
