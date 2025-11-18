@@ -29,22 +29,21 @@
     <a id="backLink" class="btn" href="/">Torna al catàleg</a>
   </div>
   <script>
-    if (window.location.protocol === 'https:' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-      const defaultPort = window.location.hostname === '127.0.0.1' ? '6060' : '6060';
-      const hasPort = Boolean(window.location.port);
-      const hostWithPort = hasPort
-        ? `${window.location.hostname}:${window.location.port}`
-        : `${window.location.hostname}:${defaultPort}`;
-      const downgraded = `http://${hostWithPort}${window.location.pathname}${window.location.search}${window.location.hash}`;
+    const LOCAL_HOSTS = ['localhost', '127.0.0.1'];
+    const DEFAULT_FRONTEND_PORT = '6060';
+    const isLocalhost = LOCAL_HOSTS.includes(window.location.hostname);
+
+    if (isLocalhost && window.location.protocol !== 'http:') {
+      const port = window.location.port || DEFAULT_FRONTEND_PORT;
+      const downgraded = `http://${window.location.hostname}:${port}${window.location.pathname}${window.location.search}${window.location.hash}`;
       window.location.replace(downgraded);
       return;
     }
 
-    const isLocalhost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-    const resolvedPort = window.location.port || (isLocalhost ? '6060' : '');
-    const resolvedOrigin = resolvedPort
-      ? `${window.location.protocol}//${window.location.hostname}:${resolvedPort}`
-      : window.location.origin;
+    const resolvedPort = window.location.port || (isLocalhost ? DEFAULT_FRONTEND_PORT : '');
+    const frontendOrigin = isLocalhost
+      ? `http://${window.location.hostname}${resolvedPort ? `:${resolvedPort}` : ''}`
+      : (resolvedPort ? `${window.location.protocol}//${window.location.hostname}:${resolvedPort}` : window.location.origin);
 
     const API_BASE_URL =
       window.__AUDIOVOOK_API__ ||
@@ -54,7 +53,7 @@
     const token = params.get('token');
     let mode = (params.get('mode') || 'cookie').toLowerCase();
     const redirectOverride = params.get('redirect');
-    const defaultRedirect = `${resolvedOrigin}/?login=ok`;
+    const defaultRedirect = `${frontendOrigin}/?login=ok`;
     const redirectTarget = redirectOverride ? decodeURIComponent(redirectOverride) : defaultRedirect;
     const shouldForceJson = isLocalhost && window.location.protocol === 'http:';
 
