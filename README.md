@@ -44,9 +44,11 @@ Audiovook Dual now ships with a FastAPI backend that implements the secure magic
 
    After requesting a magic link from the browser you will see the login URL printed in the backend logs. Copy it into the
    browser, or paste the raw token after `http://localhost:6060/auth/magic-login?token=` and the helper page will exchange the
-   token for you. Append `&response_mode=cookie` only if you hit the backend URL directly and want to force the HttpOnly cookie
-   redirect yourself. If you accidentally open the helper over `https://localhost`, it automatically downgrades back to
-   `http://localhost` so mixed-content restrictions never block the redirect to the FastAPI server on port 8000.
+   token for you. The backend automatically appends `redirect=<POST_LOGIN_REDIRECT_URL>` to every link, so the helper (JSON mode)
+   and the backend (cookie mode) always land on the same destination. Append `&response_mode=cookie` only if you hit the backend
+   URL directly and want to force the HttpOnly cookie redirect yourself. If you accidentally open the helper over
+   `https://localhost`, it automatically downgrades back to `http://localhost` while preserving the original port so
+   mixed-content restrictions never block the redirect to the FastAPI server on port 8000.
 
 Stop everything at any time with `docker compose down` (add `-v` if you also want to delete the SQLite volume).
 
@@ -121,6 +123,8 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
      on a different host.
    - Update `POST_LOGIN_REDIRECT_URL` if you need a different frontend origin (for example,
      `http://localhost:6060/index.html?login=ok` when serving the static site from the repo root).
+    - Set `AUTH_COOKIE_SECURE=false` whenever you test cookie responses over plain HTTP; otherwise browsers refuse to store the
+      cookie. The JSON fallback continues to work even if you leave the flag enabled.
    - Either set `EMAIL_ENABLED=false` or leave the SMTP variables empty during development—the backend logs the magic link when
      email is disabled or fails.
 
@@ -165,7 +169,7 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
    - Visit <http://localhost:6060/index.html>, enter the email you created, and submit the form.
    - Because SMTP is disabled, the backend prints a log similar to:
      `Magic link URL for you@example.com (token=XYZ): http://localhost:6060/auth/magic-login?token=XYZ — EMAIL_ENABLED is false`.
-  - Copy the URL, then either open it directly (adding `&response_mode=cookie` to trigger an HttpOnly cookie) **or** paste the raw token into `http://localhost:6060/auth/magic-login?token=<TOKEN>` so the frontend helper page redeems it for you.
+  - Copy the URL, then either open it directly (adding `&response_mode=cookie` to trigger an HttpOnly cookie) **or** paste the raw token into `http://localhost:6060/auth/magic-login?token=<TOKEN>` so the frontend helper page redeems it for you. Every link now carries `redirect=<POST_LOGIN_REDIRECT_URL>`, so whichever destination you configure in `.env` is reused by the helper without extra tweaks.
   - When the helper detects it is running over plain `http://localhost`, it automatically switches to JSON mode, stores the JWT inside `localStorage`, and then sends you back to the catalog. Both `index.html` and `player.html` now attach that token as a `Bearer` header when calling `/catalog/premium`, so you can test premium access without tweaking cookie settings.
   - If your browser enforces “HTTPS-only” mode, add an exception for `http://localhost:6060` (or use `http://127.0.0.1:6060`) because the helper needs plain HTTP to talk to the FastAPI container; it already tries to downgrade `https://localhost` links while preserving port `:6060`.
 

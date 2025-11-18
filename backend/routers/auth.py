@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from typing import Literal, Optional
-from urllib.parse import urlparse
+from urllib.parse import urlencode, urlparse
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import RedirectResponse
@@ -58,7 +58,7 @@ def request_magic_link(
     db.add(magic_link_token)
     db.commit()
 
-    magic_link_url = f"{settings.frontend_magic_login_url}?token={raw_token}"
+    magic_link_url = _build_magic_link_url(raw_token)
     send_magic_link_email(user.email, magic_link_url, raw_token)
 
     return _GENERIC_RESPONSE
@@ -194,6 +194,15 @@ def _redirect_allowed(url: str) -> bool:
     if not hostname:
         return False
     return hostname in settings.allowed_redirect_hosts
+
+
+def _build_magic_link_url(raw_token: str) -> str:
+    """Attach token (and redirect override, when configured) to the frontend URL."""
+    query = {"token": raw_token}
+    if settings.post_login_redirect_url:
+        query["redirect"] = settings.post_login_redirect_url
+    separator = "&" if "?" in settings.frontend_magic_login_url else "?"
+    return f"{settings.frontend_magic_login_url}{separator}{urlencode(query)}"
 
 
 def _ensure_utc(value: datetime) -> datetime:

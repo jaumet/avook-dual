@@ -33,11 +33,19 @@
     const DEFAULT_FRONTEND_PORT = '6060';
     const isLocalhost = LOCAL_HOSTS.includes(window.location.hostname);
 
-    if (isLocalhost && window.location.protocol !== 'http:') {
-      const port = window.location.port || DEFAULT_FRONTEND_PORT;
-      const downgraded = `http://${window.location.hostname}:${port}${window.location.pathname}${window.location.search}${window.location.hash}`;
-      window.location.replace(downgraded);
-      return;
+    if (isLocalhost) {
+      const desiredPort = window.location.port || DEFAULT_FRONTEND_PORT;
+      const normalizedPath = normalizePath(window.location.pathname);
+      const needsProtocolFix = window.location.protocol !== 'http:';
+      const needsPortFix = window.location.port !== desiredPort;
+      const needsPathFix = window.location.pathname !== normalizedPath;
+      if (needsProtocolFix || needsPortFix || needsPathFix) {
+        const destination = buildLocalUrl(desiredPort, normalizedPath);
+        if (window.location.href !== destination) {
+          window.location.replace(destination);
+          return;
+        }
+      }
     }
 
     const resolvedPort = window.location.port || (isLocalhost ? DEFAULT_FRONTEND_PORT : '');
@@ -104,6 +112,20 @@
         statusEl.classList.add('error');
         debugEl.textContent = 'Demana un nou enllaç o torna al catàleg.';
       }
+    }
+
+    function normalizePath(pathname){
+      if (!pathname) {
+        return '/';
+      }
+      let normalized = pathname.startsWith('/') ? pathname : `/${pathname}`;
+      normalized = normalized.replace(/\/+/g, '/');
+      return normalized === '' ? '/' : normalized;
+    }
+
+    function buildLocalUrl(port, pathname){
+      const safePort = port ? `:${port}` : '';
+      return `http://${window.location.hostname}${safePort}${pathname}${window.location.search}${window.location.hash}`;
     }
   </script>
 </body>
