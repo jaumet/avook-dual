@@ -66,7 +66,10 @@ def _send_email(
         return False, f"SMTP send failed: {exc}"
     finally:
         if smtp:
-            smtp.quit()
+            try:
+                smtp.quit()
+            except Exception as quit_exc:  # pragma: no cover - network teardown failures
+                logger.debug("SMTP quit failed: %s", quit_exc)
 
 
 def _build_magic_link_email(magic_link_url: str) -> tuple[str, str, str]:
