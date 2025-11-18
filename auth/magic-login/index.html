@@ -30,8 +30,14 @@
   </div>
   <script>
     if (window.location.protocol === 'https:' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-      const downgraded = `http://${window.location.host}${window.location.pathname}${window.location.search}${window.location.hash}`;
+      const defaultPort = window.location.hostname === '127.0.0.1' ? '6060' : '6060';
+      const hasPort = Boolean(window.location.port);
+      const hostWithPort = hasPort
+        ? `${window.location.hostname}:${window.location.port}`
+        : `${window.location.hostname}:${defaultPort}`;
+      const downgraded = `http://${hostWithPort}${window.location.pathname}${window.location.search}${window.location.hash}`;
       window.location.replace(downgraded);
+      return;
     }
 
     const API_BASE_URL =
