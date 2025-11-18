@@ -35,7 +35,7 @@ class Settings(BaseSettings):
         5, description="Maximum number of magic links a user can request within the configured window."
     )
     frontend_magic_login_url: AnyUrl = Field(
-        "http://localhost:8000/auth/magic-login",
+        "http://localhost:6060/auth/magic-login",
         description="Base URL where users land when clicking on a magic link.",
     )
     post_login_redirect_url: Optional[AnyUrl] = Field(

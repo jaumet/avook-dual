@@ -5,7 +5,7 @@ Audiovook Dual now ships with a FastAPI backend that implements the secure magic
 ## Docker quickstart
 
 1. Copy the backend environment template and set at least `JWT_SECRET_KEY` plus the frontend URLs you want to use. The template
-   already targets a fully local stack (`FRONTEND_MAGIC_LOGIN_URL=http://localhost:8000/auth/magic-login` and
+   already targets a fully local stack (`FRONTEND_MAGIC_LOGIN_URL=http://localhost:6060/auth/magic-login` and
    `POST_LOGIN_REDIRECT_URL=http://localhost:6060/?login=ok`), so you can keep those defaults while developing. Set
    `EMAIL_ENABLED=false` (or leave the SMTP fields empty) for local testing—the API logs the magic link URL whenever email
    delivery is disabled. When deploying to production, override the URLs with your public domain.
@@ -115,8 +115,9 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
 
 1. **Backend configuration**
    - Keep `DATABASE_URL=sqlite:///./audiovook.db` for the quickest setup; the file is created the moment the API boots.
-   - The `.env.example` already points `FRONTEND_MAGIC_LOGIN_URL` to `http://localhost:8000/auth/magic-login`, which is exactly
-     where the FastAPI container listens by default. Adjust the value only when you expose the backend on another hostname.
+   - The `.env.example` already points `FRONTEND_MAGIC_LOGIN_URL` to `http://localhost:6060/auth/magic-login`, which is exactly
+     where the static frontend runs when you follow the instructions above. Adjust the value whenever you expose the helper page
+     on a different host.
    - Update `POST_LOGIN_REDIRECT_URL` if you need a different frontend origin (for example,
      `http://localhost:6060/index.html?login=ok` when serving the static site from the repo root).
    - Either set `EMAIL_ENABLED=false` or leave the SMTP variables empty during development—the backend logs the magic link when
@@ -162,7 +163,7 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
 5. **Request and consume a magic link**
    - Visit <http://localhost:6060/index.html>, enter the email you created, and submit the form.
    - Because SMTP is disabled, the backend prints a log similar to:
-     `Magic link URL for you@example.com (token=XYZ): http://localhost:8000/auth/magic-login?token=XYZ — EMAIL_ENABLED is false`.
+     `Magic link URL for you@example.com (token=XYZ): http://localhost:6060/auth/magic-login?token=XYZ — EMAIL_ENABLED is false`.
    - Copy the URL, then either open it directly (adding `&response_mode=cookie` to trigger an HttpOnly cookie) **or** paste the raw token into `http://localhost:6060/auth/magic-login?token=<TOKEN>` so the frontend helper page redirects through the backend and lands you back on the catalog automatically.
 
 6. **Verify catalog protection**
