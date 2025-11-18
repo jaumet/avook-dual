@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entrant a Audiovook Dual…</title>
+  <link rel="stylesheet" href="/css/index.css">
+  <style>
+    body { display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg,#030712);color:var(--text,#fefefe);font-family:'Inter',system-ui,sans-serif;padding:1.5rem;text-align:center; }
+    .card { max-width:540px;padding:2rem;border-radius:1rem;background:rgba(255,255,255,0.05);box-shadow:0 20px 60px rgba(0,0,0,0.4);backdrop-filter: blur(8px); }
+    h1 { font-size:1.5rem;margin-bottom:0.8rem; }
+    p { line-height:1.5;margin:0.6rem 0; }
+    .status { margin-top:1.2rem;font-weight:600; }
+    .status.error { color:#ff8080; }
+    .status.success { color:#7af7b8; }
+    .spinner { width:42px;height:42px;border:4px solid rgba(255,255,255,0.2);border-top-color:var(--accent,#ff9966);border-radius:50%;margin:1.5rem auto;animation:spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    a.btn { display:inline-block;margin-top:1rem;padding:0.75rem 1.5rem;border-radius:999px;background:var(--accent,#f7836a);color:#030712;font-weight:600;text-decoration:none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img src="/imgs/logo-dual-fons-blau.png" alt="Audiovook Dual" style="max-width:140px;margin-bottom:1rem;" />
+    <h1>Validant el teu enllaç…</h1>
+    <p>Estem comprovant el token i t'obriren automàticament el catàleg premium.</p>
+    <div class="spinner" aria-hidden="true"></div>
+    <p id="status" class="status">Si no et redirigim en pocs segons, revisa que el token no hagi caducat.</p>
+    <p id="debug" class="status" style="font-size:0.85rem;opacity:0.8;"></p>
+    <a id="backLink" class="btn" href="/">Torna al catàleg</a>
+  </div>
+  <script>
+    const LOCAL_HOSTS = ['localhost', '127.0.0.1'];
+    const DEFAULT_FRONTEND_PORT = '6060';
+    const isLocalhost = LOCAL_HOSTS.includes(window.location.hostname);
+
+    if (isLocalhost && window.location.protocol !== 'http:') {
+      const port = window.location.port || DEFAULT_FRONTEND_PORT;
+      const downgraded = `http://${window.location.hostname}:${port}${window.location.pathname}${window.location.search}${window.location.hash}`;
+      window.location.replace(downgraded);
+      return;
+    }
+
+    const resolvedPort = window.location.port || (isLocalhost ? DEFAULT_FRONTEND_PORT : '');
+    const frontendOrigin = isLocalhost
+      ? `http://${window.location.hostname}${resolvedPort ? `:${resolvedPort}` : ''}`
+      : (resolvedPort ? `${window.location.protocol}//${window.location.hostname}:${resolvedPort}` : window.location.origin);
+
+    const API_BASE_URL =
+      window.__AUDIOVOOK_API__ ||
+      (isLocalhost ? 'http://localhost:8000' : 'https://api.audiovook.com');
+
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    let mode = (params.get('mode') || 'cookie').toLowerCase();
+    const redirectOverride = params.get('redirect');
+    const defaultRedirect = `${frontendOrigin}/?login=ok`;
+    const redirectTarget = redirectOverride ? decodeURIComponent(redirectOverride) : defaultRedirect;
+    const shouldForceJson = isLocalhost && window.location.protocol === 'http:';
+
+    const statusEl = document.getElementById('status');
+    const debugEl = document.getElementById('debug');
+
+    if(shouldForceJson && mode === 'cookie'){
+      debugEl.textContent = 'Entorn local detectat: farem servir el mode JSON i guardarem el token.';
+      mode = 'json';
+    }
+
+    if(!token){
+      statusEl.textContent = 'No hem trobat cap token a l\'URL.';
+      statusEl.classList.add('error');
+      debugEl.textContent = 'Comprova que hagis copiat l\'enllaç complet del correu.';
+    } else if(mode === 'json') {
+      exchangeForJson(token);
+    } else {
+      redirectForCookie(token);
+    }
+
+    function redirectForCookie(rawToken){
+      statusEl.textContent = 'Redirigint al servidor per establir la sessió…';
+      const target = new URL(`${API_BASE_URL}/auth/magic-login`);
+      target.searchParams.set('token', rawToken);
+      target.searchParams.set('response_mode', 'cookie');
+      target.searchParams.set('redirect_to', redirectTarget);
+      window.location.replace(target.toString());
+    }
+
+    async function exchangeForJson(rawToken){
+      statusEl.textContent = 'Processant token…';
+      try {
+        const loginUrl = new URL(`${API_BASE_URL}/auth/magic-login`);
+        loginUrl.searchParams.set('token', rawToken);
+        loginUrl.searchParams.set('response_mode', 'json');
+        const res = await fetch(loginUrl.toString(), { credentials: 'include' });
+        const data = await res.json().catch(() => ({}));
+        if(!res.ok){
+          throw new Error(data.detail || 'Token invàlid o caducat');
+        }
+        localStorage.setItem('audiovook_token', data.access_token);
+        statusEl.textContent = 'Sessió iniciada! Obrint el catàleg…';
+        statusEl.classList.add('success');
+        window.location.replace(redirectTarget);
+      } catch (err){
+        statusEl.textContent = err.message || 'Error desconegut validant el token';
+        statusEl.classList.add('error');
+        debugEl.textContent = 'Demana un nou enllaç o torna al catàleg.';
+      }
+    }
+  </script>
+</body>
+</html>
