@@ -4,9 +4,11 @@ Audiovook Dual now ships with a FastAPI backend that implements the secure magic
 
 ## Docker quickstart
 
-1. Copy the backend environment template and set at least `JWT_SECRET_KEY` plus the frontend URLs you want to use. Set
+1. Copy the backend environment template and set at least `JWT_SECRET_KEY` plus the frontend URLs you want to use. The template
+   already targets a fully local stack (`FRONTEND_MAGIC_LOGIN_URL=http://localhost:8000/auth/magic-login` and
+   `POST_LOGIN_REDIRECT_URL=http://localhost:6060/?login=ok`), so you can keep those defaults while developing. Set
    `EMAIL_ENABLED=false` (or leave the SMTP fields empty) for local testing—the API logs the magic link URL whenever email
-   delivery is disabled.
+   delivery is disabled. When deploying to production, override the URLs with your public domain.
 
    ```bash
    cp backend/.env.example backend/.env
@@ -80,9 +82,10 @@ docker compose port frontend 80
    cp .env.example .env
    ```
 
-   At minimum you must define `JWT_SECRET_KEY`, `FRONTEND_MAGIC_LOGIN_URL`, and `POST_LOGIN_REDIRECT_URL`. For local-only tests
-   you can keep the default SQLite `DATABASE_URL=sqlite:///./audiovook.db`, which FastAPI will create automatically inside the
-   `backend/` folder.
+   At minimum you must define `JWT_SECRET_KEY`, `FRONTEND_MAGIC_LOGIN_URL`, and `POST_LOGIN_REDIRECT_URL`. The template now uses
+   a SQLite `DATABASE_URL=sqlite:///./audiovook.db` plus localhost URLs so you can boot the API without editing anything else.
+   FastAPI creates the SQLite database automatically inside the `backend/` folder. Override the URLs when deploying to a public
+   host.
 
    > **Note:** List-style settings such as `ALLOWED_REDIRECT_HOSTS` and `ALLOWED_CORS_ORIGINS` accept either comma-separated
    > values or JSON arrays. Leave the variables blank if you prefer to fall back to the built-in defaults.
@@ -110,10 +113,12 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
 
 1. **Backend configuration**
    - Keep `DATABASE_URL=sqlite:///./audiovook.db` for the quickest setup; the file is created the moment the API boots.
-   - Set `FRONTEND_MAGIC_LOGIN_URL=http://localhost:8000/auth/magic-login` so emails point to your local API while testing.
-   - Add `POST_LOGIN_REDIRECT_URL=http://localhost:6060/index.html?login=ok` so cookie responses send you back to the local catalog.
-   - Either set `EMAIL_ENABLED=false` or leave the SMTP variables empty during development—the backend logs the magic link
-     when email is disabled.
+   - The `.env.example` already points `FRONTEND_MAGIC_LOGIN_URL` to `http://localhost:8000/auth/magic-login`, which is exactly
+     where the FastAPI container listens by default. Adjust the value only when you expose the backend on another hostname.
+   - Update `POST_LOGIN_REDIRECT_URL` if you need a different frontend origin (for example,
+     `http://localhost:6060/index.html?login=ok` when serving the static site from the repo root).
+   - Either set `EMAIL_ENABLED=false` or leave the SMTP variables empty during development—the backend logs the magic link when
+     email is disabled or fails.
 
 2. **Run the backend**
 

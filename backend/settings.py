@@ -35,11 +35,11 @@ class Settings(BaseSettings):
         5, description="Maximum number of magic links a user can request within the configured window."
     )
     frontend_magic_login_url: AnyUrl = Field(
-        "https://audiovook.com/auth/magic-login",
+        "http://localhost:8000/auth/magic-login",
         description="Base URL where users land when clicking on a magic link.",
     )
     post_login_redirect_url: Optional[AnyUrl] = Field(
-        "https://audiovook.com/dual/?login=ok",
+        "http://localhost:6060/?login=ok",
         description="Default URL used when issuing HttpOnly cookie responses after magic login.",
     )
     stripe_webhook_secret: Optional[str] = Field(

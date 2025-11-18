@@ -94,7 +94,8 @@ def magic_login(
     if magic_link_token.used_at is not None:
         raise HTTPException(status_code=400, detail="Token already used")
 
-    if magic_link_token.expires_at < now:
+    expires_at = _ensure_utc(magic_link_token.expires_at)
+    if expires_at < now:
         raise HTTPException(status_code=400, detail="Token expired")
 
     user = (
@@ -193,3 +194,11 @@ def _redirect_allowed(url: str) -> bool:
     if not hostname:
         return False
     return hostname in settings.allowed_redirect_hosts
+
+
+def _ensure_utc(value: datetime) -> datetime:
+    """Normalize DB datetimes (which may be naive under SQLite) to UTC."""
+
+    if value.tzinfo is None:
+        return value.replace(tzinfo=timezone.utc)
+    return value.astimezone(timezone.utc)
