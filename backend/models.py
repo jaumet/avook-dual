@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import uuid
 from datetime import datetime, timezone
 
@@ -26,6 +28,26 @@ class User(Base):
     magic_link_tokens = relationship(
         "MagicLinkToken", back_populates="user", cascade="all, delete-orphan"
     )
+    package_links = relationship(
+        "UserPackage", back_populates="user", cascade="all, delete-orphan"
+    )
+
+    @property
+    def packages(self) -> list[str]:  # pragma: no cover - convenience proxy
+        if self.full_access:
+            try:
+                from .catalog import CatalogConfigError, get_packages
+
+                return [pkg.get("id") for pkg in get_packages() if pkg.get("id")]
+            except CatalogConfigError:
+                pass
+        return [link.package_id for link in self.package_links]
+
+    def has_any_package(self) -> bool:
+        return self.full_access or bool(self.package_links)
+
+    def can_access_package(self, package_id: str) -> bool:
+        return self.full_access or package_id in self.packages
 
 
 class MagicLinkToken(Base):
@@ -41,3 +63,15 @@ class MagicLinkToken(Base):
     created_user_agent = Column(Text, nullable=True)
 
     user = relationship("User", back_populates="magic_link_tokens")
+
+
+class UserPackage(Base):
+    __tablename__ = "user_packages"
+
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    package_id = Column(String, primary_key=True)
+    granted_at = Column(DateTime(timezone=True), default=_utcnow, nullable=False)
+
+    user = relationship("User", back_populates="package_links")

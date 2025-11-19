@@ -1,0 +1,70 @@
+{
+  "packages": [
+    {
+      "id": "pkg-a0",
+      "name": "Pack inicial A0",
+      "level_range": "A0",
+      "description": "Mostra oberta amb tots els relats del nivell A0.",
+      "is_free": true,
+      "stripe_product_id": null,
+      "stripe_price_id": null,
+      "title_ids": [
+        "0-1-Salutacions-i-emocions",
+        "0-2-D-on-ets",
+        "0-3-Bon-dia-bona-nit",
+        "0-4-A-casa-meva",
+        "0-5-Relacions-i-presentacions",
+        "0-6-Objectes-i-aliments"
+      ]
+    },
+    {
+      "id": "pkg-a1",
+      "name": "Pack A1",
+      "level_range": "A1",
+      "description": "Relats A1 orientats a estudiants que passen del nivell inicial.",
+      "is_free": false,
+      "stripe_product_id": "prod_pkg_a1",
+      "stripe_price_id": "price_pkg_a1",
+      "title_ids": [
+        "titol_test",
+        "Els-primers-pobles-del-mon"
+      ]
+    },
+    {
+      "id": "pkg-a2",
+      "name": "Pack A2",
+      "level_range": "A2",
+      "description": "Històries intermitges amb nous reptes i vocabulari.",
+      "is_free": false,
+      "stripe_product_id": "prod_pkg_a2",
+      "stripe_price_id": "price_pkg_a2",
+      "title_ids": [
+        "el-mapa-de-la-biblioteca"
+      ]
+    },
+    {
+      "id": "pkg-b1",
+      "name": "Pack B1",
+      "level_range": "B1",
+      "description": "Converses i reportatges per consolidar el nivell B1.",
+      "is_free": false,
+      "stripe_product_id": "prod_pkg_b1",
+      "stripe_price_id": "price_pkg_b1",
+      "title_ids": [
+        "Reportatge-al-mercat"
+      ]
+    },
+    {
+      "id": "pkg-b2",
+      "name": "Pack B2",
+      "level_range": "B2",
+      "description": "Situacions avançades per perfeccionar el català.",
+      "is_free": false,
+      "stripe_product_id": "prod_pkg_b2",
+      "stripe_price_id": "price_pkg_b2",
+      "title_ids": [
+        "Trobada-a-l-exposicio"
+      ]
+    }
+  ]
+}

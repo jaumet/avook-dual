@@ -45,6 +45,9 @@ class Settings(BaseSettings):
     stripe_webhook_secret: Optional[str] = Field(
         None, description="Stripe webhook signing secret used to validate events."
     )
+    stripe_secret_key: Optional[str] = Field(
+        None, description="Stripe secret key used to fetch checkout line items."
+    )
     email_from_address: str = Field(
         "no-reply@audiovook.com", description="Sender email used for transactional emails."
     )

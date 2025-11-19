@@ -1,58 +1,65 @@
 {
   "PATH_AUDIOS": "/AUDIOS/",
   "AUDIOS": {
-    "titol_test": {
-      "id": "titol_test",
-      "title-human": "Test curt",
-      "description": "Simple test de 4 frases en 3 llengues: CA, EN, PT",
-      "levels": "A1",
-      "langs": "CA,EN,PT",
-      "ages": "0-99",
-      "colection": "Test",
-      "duration": "00:00:40",
-      "PT-titol_test.json": "file",
-      "EN-titol_test.json": "file",
-      "CA-titol_test.json": "file"
-    },
     "0-1-Salutacions-i-emocions": {
-      "id": "0-1-Salutacions-i-emocions",
       "title-human": "Salutacions i emocions",
       "description": "",
       "levels": "A0",
       "langs": "CA, EN",
       "ages": "0-99",
       "CA-0-1-Salutacions-i-emocions.json": "file",
-      "EN-0-1-Salutacions-i-emocions.json": "file"
+      "EN-0-1-Salutacions-i-emocions.json": "file",
+      "id": "0-1-Salutacions-i-emocions"
     },
     "0-2-D-on-ets": {
-      "id": "0-2-D-on-ets",
       "title-human": "D on ets",
       "description": "",
       "levels": "A0",
       "langs": "CA, EN",
       "ages": "0-99",
       "EN-0-2.json": "file",
-      "CA-0-2.json": "file"
+      "CA-0-2.json": "file",
+      "id": "0-2-D-on-ets"
     },
     "0-3-Bon-dia-bona-nit": {
-      "id": "0-3-Bon-dia-bona-nit",
       "title-human": "Bon dia bona nit",
       "description": "",
       "levels": "A0",
       "langs": "CA, EN",
       "ages": "0-99",
       "EN-0-3.json": "file",
-      "CA-0-3.json": "file"
+      "CA-0-3.json": "file",
+      "id": "0-3-Bon-dia-bona-nit"
     },
     "0-4-A-casa-meva": {
-      "id": "0-4-A-casa-meva",
       "title-human": "A casa meva",
       "description": "",
       "levels": "A0",
       "langs": "CA, EN",
       "ages": "0-99",
       "EN-0-4.json": "file",
-      "CA-0-4.json": "file"
+      "CA-0-4.json": "file",
+      "id": "0-4-A-casa-meva"
+    },
+    "0-5-Relacions-i-presentacions": {
+      "title-human": "Relacions i presentacions",
+      "description": "",
+      "levels": "A0",
+      "langs": "CA, EN",
+      "ages": "0-99",
+      "EN-0-5.json": "file",
+      "CA-0-5.json": "file",
+      "id": "0-5-Relacions-i-presentacions"
+    },
+    "0-6-Objectes-i-aliments": {
+      "title-human": "Objectes i aliments",
+      "description": "",
+      "levels": "A0",
+      "langs": "CA, EN",
+      "ages": "0-99",
+      "EN-0-6.json": "file",
+      "CA-0-6.json": "file",
+      "id": "0-6-Objectes-i-aliments"
     }
   }
 }
