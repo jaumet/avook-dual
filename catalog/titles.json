@@ -1,6 +1,6 @@
 {
-  "PATH_AUDIOS": "/AUDIOS/",
-  "AUDIOS": {
+  "path_audios": "/AUDIOS/",
+  "titles": {
     "el-mapa-de-la-biblioteca": {
       "title-human": "El mapa de la biblioteca",
       "description": "quí descripció",

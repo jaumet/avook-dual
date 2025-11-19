@@ -204,6 +204,29 @@ async function loadCatalog(){
 async function fetchCatalogIndex(){
   const token = localStorage.getItem('audiovook_token');
   const authHeaders = token ? { Authorization: `Bearer ${token}` } : undefined;
+  const freeData = await fetchFreeCatalog(authHeaders);
+  const merged = {
+    PATH_AUDIOS: freeData.PATH_AUDIOS || '/AUDIOS/',
+    AUDIOS: { ...(freeData.AUDIOS || {}) }
+  };
+
+  const packageIds = await fetchUserPackages(authHeaders);
+  const uniquePackages = [...new Set(packageIds)];
+  if(uniquePackages.length){
+    const results = await Promise.all(
+      uniquePackages.map((pkgId) => fetchPackageCatalog(pkgId, authHeaders).catch(() => null))
+    );
+    results.forEach(pkg => {
+      if(pkg && pkg.AUDIOS){
+        Object.assign(merged.AUDIOS, pkg.AUDIOS);
+      }
+    });
+  }
+
+  return merged;
+}
+
+async function fetchFreeCatalog(authHeaders){
   const loadFallback = async () => {
     const res = await fetch('./audios-free.json');
     if(!res.ok) throw new Error('No s\'ha pogut carregar el catàleg obert.');
@@ -211,34 +234,46 @@ async function fetchCatalogIndex(){
   };
 
   try {
-    const freeOptions = { credentials: 'include' };
-    if(authHeaders) freeOptions.headers = authHeaders;
-    const freeRes = await fetch(`${API_BASE_URL}/catalog/free`, freeOptions);
-    if(!freeRes.ok) throw new Error('No s\'ha pogut carregar el catàleg obert.');
-    const freeData = await freeRes.json();
-    const merged = {
-      PATH_AUDIOS: freeData.PATH_AUDIOS || '/AUDIOS/',
-      AUDIOS: { ...(freeData.AUDIOS || {}) }
-    };
-
-    try {
-      const premiumOptions = { credentials: 'include' };
-      if(authHeaders) premiumOptions.headers = authHeaders;
-      const premiumRes = await fetch(`${API_BASE_URL}/catalog/premium`, premiumOptions);
-      if(premiumRes.ok){
-        const premiumData = await premiumRes.json();
-        Object.assign(merged.AUDIOS, premiumData.AUDIOS || {});
-      } else if (![401, 403].includes(premiumRes.status)) {
-        console.warn('Error carregant el catàleg premium', premiumRes.status);
-      }
-    } catch (err) {
-      console.warn('No s\'ha pogut carregar el catàleg premium.', err);
-    }
-
-    return merged;
+    const options = { credentials: 'include' };
+    if(authHeaders) options.headers = authHeaders;
+    const res = await fetch(`${API_BASE_URL}/catalog/free`, options);
+    if(!res.ok) throw new Error('No s\'ha pogut carregar el catàleg obert.');
+    return res.json();
   } catch (error){
     console.warn('Fent servir el catàleg inclòs al projecte.', error);
     return loadFallback();
+  }
+}
+
+async function fetchUserPackages(authHeaders){
+  try {
+    const options = { credentials: 'include' };
+    if(authHeaders) options.headers = authHeaders;
+    const res = await fetch(`${API_BASE_URL}/auth/me`, options);
+    if(!res.ok) return [];
+    const data = await res.json().catch(() => ({}));
+    return Array.isArray(data.packages) ? data.packages : [];
+  } catch (err){
+    console.warn('No s\'han pogut obtenir els paquets', err);
+    return [];
+  }
+}
+
+async function fetchPackageCatalog(packageId, authHeaders){
+  try {
+    const options = { credentials: 'include' };
+    if(authHeaders) options.headers = authHeaders;
+    const res = await fetch(`${API_BASE_URL}/catalog/packages/${encodeURIComponent(packageId)}`, options);
+    if(!res.ok){
+      if(![401,403,404].includes(res.status)){
+        console.warn(`Error carregant el paquet ${packageId}`, res.status);
+      }
+      return null;
+    }
+    return res.json();
+  } catch (err){
+    console.warn(`No s'ha pogut carregar el paquet ${packageId}`, err);
+    return null;
   }
 }
 

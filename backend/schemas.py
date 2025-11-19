@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 from typing import Optional
 
@@ -16,6 +18,7 @@ class UserRead(BaseModel):
     id: int
     email: EmailStr
     full_access: bool
+    packages: list[str] = []
 
     class Config:
         orm_mode = True
