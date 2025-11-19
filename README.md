@@ -101,14 +101,25 @@ docker compose port frontend 80
    uvicorn backend.app:app --reload
    ```
 
+### Catalog data layout
+
+- `catalog/titles.json` stores the authoritative metadata for every title (description, asset names, cover, etc.).
+- `catalog/packages.json` groups `title_ids` into sellable packages, including optional Stripe product/price IDs. One of the packages must have `"is_free": true` so the backend knows which entries are public.
+- `audios-free.json` remains as a static fallback for browsers that cannot reach the API (for example when running `python -m http.server` without the backend). The file mirrors the titles listed in the free package.
+
+### API overview
+
 The following routes are now available (they are the same whether you run locally or inside Docker):
 
 - `POST /auth/magic-link/request` – issues a one-time magic link token and emails it to the user.
 - `GET /auth/magic-login?token=<RAW_TOKEN>` – validates a magic link token and returns a signed JWT. Pass `response_mode=cookie` to set the JWT inside an `HttpOnly` cookie and redirect to the configured `POST_LOGIN_REDIRECT_URL`.
-- `POST /webhooks/stripe` – consumes Stripe checkout events and grants `full_access` to matching users.
+- `POST /webhooks/stripe` – consumes Stripe checkout events and grants the matching catalog packages to the purchaser.
 
-- `GET /catalog/free` – returns the entries listed in `audios-free.json` for everyone (no authentication required).
-- `GET /catalog/premium` – returns the private entries stored in `backend/data/audios.json` for authenticated users with `full_access`.
+- `GET /catalog/free` – returns the entries assigned to the `is_free` package inside `catalog/packages.json`.
+- `GET /catalog/packages/{package_id}` – returns a single package for authenticated users who own it (or have `full_access`).
+- `GET /auth/me` – returns the authenticated user profile, including the list of package IDs that have been granted.
+
+The Stripe webhook maps checkout sessions to package IDs using `catalog/packages.json`. Set both `STRIPE_WEBHOOK_SECRET` (to validate signatures) and `STRIPE_SECRET_KEY` (to inspect line items) so that purchases automatically assign the correct packages to a user.
 
 All state is stored using SQLAlchemy models for `users` and `magic_link_tokens`, matching the schema from the documentation.
 
@@ -141,8 +152,10 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
 3. **Create a subscriber account**
 
    ```bash
-   python -m backend.manage create-user you@example.com --full-access
+   python -m backend.manage create-user you@example.com --package pkg-a1
    ```
+
+   Add `--full-access` if you want to bypass per-package entitlements and unlock every package for that user.
 
    Run `python -m backend.manage list-users` any time to inspect what is stored.
 
@@ -150,7 +163,7 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
    > container, for example:
    >
    > ```bash
-   > docker compose exec backend python -m backend.manage create-user you@example.com --full-access
+   > docker compose exec backend python -m backend.manage create-user you@example.com --package pkg-a1
    > docker compose exec backend python -m backend.manage list-users
    > ```
 
@@ -170,12 +183,12 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
    - Because SMTP is disabled, the backend prints a log similar to:
      `Magic link URL for you@example.com (token=XYZ): http://localhost:6060/auth/magic-login?token=XYZ — EMAIL_ENABLED is false`.
   - Copy the URL, then either open it directly (adding `&response_mode=cookie` to trigger an HttpOnly cookie) **or** paste the raw token into `http://localhost:6060/auth/magic-login?token=<TOKEN>` so the frontend helper page redeems it for you. Every link now carries `redirect=<POST_LOGIN_REDIRECT_URL>`, so whichever destination you configure in `.env` is reused by the helper without extra tweaks.
-  - When the helper detects it is running over plain `http://localhost`, it automatically switches to JSON mode, stores the JWT inside `localStorage`, and then sends you back to the catalog. Both `index.html` and `player.html` now attach that token as a `Bearer` header when calling `/catalog/premium`, so you can test premium access without tweaking cookie settings.
+  - When the helper detects it is running over plain `http://localhost`, it automatically switches to JSON mode, stores the JWT inside `localStorage`, and then sends you back to the catalog. Both `index.html` and `player.html` now attach that token as a `Bearer` header when calling `/auth/me` and `/catalog/packages/<package_id>`, so you can test premium access without tweaking cookie settings.
   - If your browser enforces “HTTPS-only” mode, add an exception for `http://localhost:6060` (or use `http://127.0.0.1:6060`) because the helper needs plain HTTP to talk to the FastAPI container; it already tries to downgrade `https://localhost` links while preserving port `:6060`.
 
 6. **Verify catalog protection**
    - Anonymous users (or fresh browsers) hit `/catalog/free` and see only the entries from `audios-free.json`.
-   - After clicking the magic link, the cookie lets the frontend merge `/catalog/premium` with the open catalog, so premium stories appear.
+   - After clicking the magic link, the frontend calls `/auth/me` to read the package IDs granted to the account and then loads `/catalog/packages/<package_id>` for each one, so premium stories appear.
    - The static fallback has been limited to `audios-free.json`, preventing the bundled premium catalog from leaking offline.
 
 7. **Play audio locally**
@@ -189,8 +202,7 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
 - **Database creation**: Both the manual and Docker workflows run `Base.metadata.create_all` during startup. When you use SQLite
   the file is created automatically; with Postgres the tables are created inside the configured database.
 - **Premium catalog locked down**: Anonymous browsers only fetch `/catalog/free`, which mirrors `audios-free.json`. Authenticated
-  sessions receive `/catalog/premium` as soon as they present a valid JWT (either via the `Authorization` header or the HttpOnly
-  cookie), so the bundled premium JSON is never exposed to users without a magic link.
+  sessions use `/auth/me` + `/catalog/packages/{package_id}` with their JWT or HttpOnly cookie, so paid stories remain protected.
 
 ### Security hardening
 

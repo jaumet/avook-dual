@@ -1,38 +1,49 @@
-import json
-from pathlib import Path
-
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from ..dependencies import get_current_full_access_user
+from ..catalog import (
+    CatalogConfigError,
+    build_catalog_for_package_id,
+    build_catalog_response,
+    get_free_package_definition,
+)
+from ..dependencies import get_current_user
 from ..models import User
 
 router = APIRouter(prefix="/catalog", tags=["catalog"])
 
-ROOT_DIR = Path(__file__).resolve().parents[2]
-PREMIUM_PATH = ROOT_DIR / "backend" / "data" / "audios.json"
-FREE_PATH = ROOT_DIR / "audios-free.json"
 
-
-def _load_catalog(path: Path) -> dict:
-    try:
-        with path.open("r", encoding="utf-8") as fh:
-            return json.load(fh)
-    except FileNotFoundError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Missing catalog file: {path.name}",
-        ) from exc
+def _handle_catalog_error(exc: CatalogConfigError) -> HTTPException:
+    detail = str(exc)
+    if "Unknown package id" in detail:
+        return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Package not found")
+    return HTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail=detail or "Catalog configuration error",
+    )
 
 
 @router.get("/free")
 def get_free_catalog() -> dict:
-    """Return the catalog entries that are public for everyone."""
+    try:
+        package = get_free_package_definition()
+        return build_catalog_response(package)
+    except CatalogConfigError as exc:  # pragma: no cover - runtime validation
+        raise _handle_catalog_error(exc) from exc
 
-    return _load_catalog(FREE_PATH)
 
+@router.get("/packages/{package_id}")
+def get_package_catalog(
+    package_id: str, current_user: User = Depends(get_current_user)
+) -> dict:
+    try:
+        catalog = build_catalog_for_package_id(package_id)
+    except CatalogConfigError as exc:  # pragma: no cover - runtime validation
+        raise _handle_catalog_error(exc) from exc
 
-@router.get("/premium")
-def get_premium_catalog(current_user: User = Depends(get_current_full_access_user)) -> dict:
-    """Return the full catalog for authenticated subscribers."""
+    if not current_user.can_access_package(package_id):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Subscription required",
+        )
 
-    return _load_catalog(PREMIUM_PATH)
+    return catalog

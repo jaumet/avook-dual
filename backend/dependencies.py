@@ -60,6 +60,6 @@ def get_current_user(
 def get_current_full_access_user(
     current_user: User = Depends(get_current_user),
 ) -> User:
-    if not current_user.full_access:
+    if not current_user.has_any_package():
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Subscription required")
     return current_user

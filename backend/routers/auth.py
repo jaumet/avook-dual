@@ -7,9 +7,15 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 from ..database import get_db
+from ..dependencies import get_current_user
 from ..email_utils import send_magic_link_email
 from ..models import MagicLinkToken, User
-from ..schemas import GenericDetailResponse, MagicLinkRequest, MagicLoginResponse
+from ..schemas import (
+    GenericDetailResponse,
+    MagicLinkRequest,
+    MagicLoginResponse,
+    UserRead,
+)
 from ..security import create_access_token, generate_magic_raw_token, hash_token
 from ..settings import get_settings
 
@@ -32,12 +38,11 @@ def request_magic_link(
         .filter(
             User.email == email_norm,
             User.is_active.is_(True),
-            User.full_access.is_(True),
         )
         .first()
     )
 
-    if not user:
+    if not user or not user.has_any_package():
         return _GENERIC_RESPONSE
 
     _enforce_rate_limit(db, user)
@@ -104,7 +109,7 @@ def magic_login(
         .first()
     )
 
-    if not user or not user.full_access:
+    if not user:
         raise HTTPException(status_code=403, detail="User not allowed")
 
     current_ip, current_ua = _extract_request_fingerprint(request)
@@ -137,6 +142,11 @@ def magic_login(
         token_type="bearer",
         user=user,
     )
+
+
+@router.get("/me", response_model=UserRead)
+def read_current_user(current_user: User = Depends(get_current_user)) -> User:
+    return current_user
 
 
 def _enforce_rate_limit(db: Session, user: User) -> None:

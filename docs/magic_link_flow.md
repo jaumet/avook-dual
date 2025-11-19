@@ -12,6 +12,8 @@ Actors involved:
 
 High-level flow:
 
+> **Note:** The production backend now grants per-package entitlements using `catalog/packages.json`. The legacy `full_access` flag is still supported for all-access plans, but most Stripe purchases map to specific package IDs.
+
 1. **Stripe purchase**
    - Stripe sends a webhook to the backend.
    - The backend creates or updates the `User` with `full_access = true` using the Stripe email.
