@@ -50,12 +50,14 @@
 
     const resolvedPort = window.location.port || (isLocalhost ? DEFAULT_FRONTEND_PORT : '');
     const frontendOrigin = isLocalhost
-      ? `http://${window.location.hostname}${resolvedPort ? `:${resolvedPort}` : ''}`
+      ? `${window.location.protocol}//${window.location.hostname}${resolvedPort ? `:${resolvedPort}` : ''}`
       : (resolvedPort ? `${window.location.protocol}//${window.location.hostname}:${resolvedPort}` : window.location.origin);
 
     const API_BASE_URL =
       window.__AUDIOVOOK_API__ ||
-      (isLocalhost ? 'http://localhost:8000' : 'https://api.audiovook.com');
+      (isLocalhost
+        ? `${window.location.protocol}//${window.location.hostname}:8000`
+        : 'https://api.audiovook.com');
 
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
@@ -125,7 +127,8 @@
 
     function buildLocalUrl(port, pathname){
       const safePort = port ? `:${port}` : '';
-      return `http://${window.location.hostname}${safePort}${pathname}${window.location.search}${window.location.hash}`;
+      const protocol = window.location.protocol || 'http:';
+      return `${protocol}//${window.location.hostname}${safePort}${pathname}${window.location.search}${window.location.hash}`;
     }
   </script>
 </body>

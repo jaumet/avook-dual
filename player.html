@@ -148,12 +148,12 @@
 </div>
 
 <script>
+const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 const API_BASE_URL =
   window.__AUDIOVOOK_API__ ||
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:8000'
+  (isLocalhost
+    ? `${window.location.protocol}//${window.location.hostname}:8000`
     : 'https://api.audiovook.com');
-const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 const AUDIO_BASE_URL =
   window.__AUDIOVOOK_MEDIA__ ||
   (isLocalhost
