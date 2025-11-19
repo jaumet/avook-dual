@@ -109,7 +109,7 @@ def magic_login(
         .first()
     )
 
-    if not user or not user.has_any_package():
+    if not user:
         raise HTTPException(status_code=403, detail="User not allowed")
 
     current_ip, current_ua = _extract_request_fingerprint(request)
