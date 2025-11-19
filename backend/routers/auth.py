@@ -10,7 +10,12 @@ from ..database import get_db
 from ..dependencies import get_current_user
 from ..email_utils import send_magic_link_email
 from ..models import MagicLinkToken, User
-from ..schemas import GenericDetailResponse, MagicLinkRequest, MagicLoginResponse
+from ..schemas import (
+    GenericDetailResponse,
+    MagicLinkRequest,
+    MagicLoginResponse,
+    UserRead,
+)
 from ..security import create_access_token, generate_magic_raw_token, hash_token
 from ..settings import get_settings
 
