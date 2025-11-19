@@ -15,11 +15,26 @@ services:
   frontend:
     build:
       context: .
+    # uses docker/frontend/Dockerfile in your repo
       dockerfile: docker/frontend/Dockerfile
     depends_on:
       - backend
     ports:
       - "${FRONTEND_PORT:-6060}:80"
+
+  proxy:                      # <-- add THIS under 'services:'
+    image: nginx:alpine
+    container_name: dual-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./dual.local+3.pem:/etc/nginx/certs/fullchain.pem:ro
+      - ./dual.local+3-key.pem:/etc/nginx/certs/privkey.pem:ro
+    depends_on:
+      - frontend
+      - backend
 
 volumes:
   backend-data:
