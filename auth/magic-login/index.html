@@ -65,7 +65,9 @@
     const redirectOverride = params.get('redirect');
     const defaultRedirect = `${frontendOrigin}/?login=ok`;
     const redirectTarget = redirectOverride ? decodeURIComponent(redirectOverride) : defaultRedirect;
-    const shouldForceJson = isLocalhost && window.location.protocol === 'http:';
+    // En entorns locals preferim el mode JSON per guardar el token al localStorage,
+    // encara que l'enllaç arribi per HTTPS.
+    const shouldForceJson = isLocalhost;
 
     const statusEl = document.getElementById('status');
     const debugEl = document.getElementById('debug');
@@ -105,7 +107,10 @@
         if(!res.ok){
           throw new Error(data.detail || 'Token invàlid o caducat');
         }
-        localStorage.setItem('audiovook_token', data.access_token);
+        localStorage.setItem('av_jwt', data.access_token);
+        if (data.user) {
+          localStorage.setItem('av_user', JSON.stringify(data.user));
+        }
         statusEl.textContent = 'Sessió iniciada! Obrint el catàleg…';
         statusEl.classList.add('success');
         window.location.replace(redirectTarget);
