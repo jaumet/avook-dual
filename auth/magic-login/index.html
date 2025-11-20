@@ -50,12 +50,14 @@
 
     const resolvedPort = window.location.port || (isLocalhost ? DEFAULT_FRONTEND_PORT : '');
     const frontendOrigin = isLocalhost
-      ? `http://${window.location.hostname}${resolvedPort ? `:${resolvedPort}` : ''}`
+      ? `${window.location.protocol}//${window.location.hostname}${resolvedPort ? `:${resolvedPort}` : ''}`
       : (resolvedPort ? `${window.location.protocol}//${window.location.hostname}:${resolvedPort}` : window.location.origin);
 
     const API_BASE_URL =
       window.__AUDIOVOOK_API__ ||
-      (isLocalhost ? 'http://localhost:8000' : 'https://api.audiovook.com');
+      (isLocalhost
+        ? `${window.location.protocol}//${window.location.hostname}:8000`
+        : 'https://api.audiovook.com');
 
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
@@ -63,7 +65,9 @@
     const redirectOverride = params.get('redirect');
     const defaultRedirect = `${frontendOrigin}/?login=ok`;
     const redirectTarget = redirectOverride ? decodeURIComponent(redirectOverride) : defaultRedirect;
-    const shouldForceJson = isLocalhost && window.location.protocol === 'http:';
+    // En entorns locals preferim el mode JSON per guardar el token al localStorage,
+    // encara que l'enllaç arribi per HTTPS.
+    const shouldForceJson = isLocalhost;
 
     const statusEl = document.getElementById('status');
     const debugEl = document.getElementById('debug');
@@ -103,7 +107,10 @@
         if(!res.ok){
           throw new Error(data.detail || 'Token invàlid o caducat');
         }
-        localStorage.setItem('audiovook_token', data.access_token);
+        localStorage.setItem('av_jwt', data.access_token);
+        if (data.user) {
+          localStorage.setItem('av_user', JSON.stringify(data.user));
+        }
         statusEl.textContent = 'Sessió iniciada! Obrint el catàleg…';
         statusEl.classList.add('success');
         window.location.replace(redirectTarget);
@@ -125,7 +132,8 @@
 
     function buildLocalUrl(port, pathname){
       const safePort = port ? `:${port}` : '';
-      return `http://${window.location.hostname}${safePort}${pathname}${window.location.search}${window.location.hash}`;
+      const protocol = window.location.protocol || 'http:';
+      return `${protocol}//${window.location.hostname}${safePort}${pathname}${window.location.search}${window.location.hash}`;
     }
   </script>
 </body>
