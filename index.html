@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Audiovook Dual — Aprèn llengües escoltant històries</title>
 <link rel="stylesheet" href="./css/index.css">
+<script type="module" src="./js/auth.js"></script>
 
 <style>
 
@@ -144,8 +145,7 @@
 
 <script>
 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const API_BASE_URL =
-  window.__AUDIOVOOK_API__ ||
+const API_BASE_URL = window.__AVOOK_API_BASE__ ||
   (isLocalhost
     ? `${window.location.protocol}//${window.location.hostname}:8000`
     : 'https://api.audiovook.com');
@@ -203,7 +203,7 @@ async function loadCatalog(){
 }
 
 async function fetchCatalogIndex(){
-  const token = localStorage.getItem('audiovook_token');
+  const token = localStorage.getItem('av_jwt') || localStorage.getItem('audiovook_token');
   const authHeaders = token ? { Authorization: `Bearer ${token}` } : undefined;
   const freeData = await fetchFreeCatalog(authHeaders);
   const merged = {
