@@ -19,6 +19,7 @@
 <meta name="twitter:image" content="https://audiovook.com/dual/imgs/logo-dual-fons-blau.png">
 
 <link rel="stylesheet" href="./css/player.css">
+<script type="module" src="./js/auth.js"></script>
 </head>
 
 <body class="dark">
@@ -148,12 +149,11 @@
 </div>
 
 <script>
-const API_BASE_URL =
-  window.__AUDIOVOOK_API__ ||
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:8000'
-    : 'https://api.audiovook.com');
 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE_URL = window.__AVOOK_API_BASE__ ||
+  (isLocalhost
+    ? `${window.location.protocol}//${window.location.hostname}:8000`
+    : 'https://api.audiovook.com');
 const AUDIO_BASE_URL =
   window.__AUDIOVOOK_MEDIA__ ||
   (isLocalhost
@@ -172,7 +172,7 @@ function resolveImagePath(imgPath,title){
 }
 
 async function fetchCatalogIndex(){
-  const token = localStorage.getItem('audiovook_token');
+  const token = localStorage.getItem('av_jwt') || localStorage.getItem('audiovook_token');
   const authHeaders = token ? { Authorization: `Bearer ${token}` } : undefined;
   const freeData = await fetchFreeCatalog(authHeaders);
   const merged = {
