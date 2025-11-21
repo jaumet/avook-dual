@@ -225,3 +225,5 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
 ```
 
 After a successful cookie-based login the backend redirects back to `/?login=ok`, triggering a toast that confirms the session is ready.
+
+If you want to close the session, use the **Tancar sessió** button in the header. It clears the browser tokens and calls `POST /auth/logout` to expire the HttpOnly cookie before reloading the page.

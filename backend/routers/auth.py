@@ -3,7 +3,7 @@ from typing import Literal, Optional
 from urllib.parse import urlencode, urlparse
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -147,6 +147,20 @@ def magic_login(
 @router.get("/me", response_model=UserRead)
 def read_current_user(current_user: User = Depends(get_current_user)) -> User:
     return current_user
+
+
+@router.post("/logout", response_model=GenericDetailResponse)
+def logout() -> JSONResponse:
+    response = JSONResponse({"detail": "Sessió tancada"})
+    cookie_kwargs = dict(
+        httponly=True,
+        secure=settings.auth_cookie_secure,
+        samesite=settings.auth_cookie_samesite,
+    )
+    if settings.auth_cookie_domain:
+        cookie_kwargs["domain"] = settings.auth_cookie_domain
+    response.delete_cookie(key=settings.auth_cookie_name, **cookie_kwargs)
+    return response
 
 
 def _enforce_rate_limit(db: Session, user: User) -> None:
