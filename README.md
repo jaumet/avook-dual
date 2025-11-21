@@ -136,8 +136,8 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
      on a different host.
    - Update `POST_LOGIN_REDIRECT_URL` if you need a different frontend origin (for example,
      `http://localhost:6060/index.html?login=ok` when serving the static site from the repo root).
-    - Set `AUTH_COOKIE_SECURE=false` whenever you test cookie responses over plain HTTP; otherwise browsers refuse to store the
-      cookie. The JSON fallback continues to work even if you leave the flag enabled.
+   - Cookie responses automatically drop the `Secure` flag on plain `http://` origins so local testing works out of the box. If
+     you prefer to harden the behavior, set `AUTH_COOKIE_SECURE=false` explicitly in `.env` to mirror production defaults.
    - Either set `EMAIL_ENABLED=false` or leave the SMTP variables empty during development—the backend logs the magic link when
      email is disabled or fails.
 

@@ -135,7 +135,7 @@ def magic_login(
     access_token = create_access_token({"sub": str(user.id)})
 
     if response_mode == "cookie":
-        return _build_cookie_response(access_token, redirect_to)
+        return _build_cookie_response(access_token, redirect_to, request)
 
     return MagicLoginResponse(
         access_token=access_token,
@@ -150,16 +150,12 @@ def read_current_user(current_user: User = Depends(get_current_user)) -> User:
 
 
 @router.post("/logout", response_model=GenericDetailResponse)
-def logout() -> JSONResponse:
+def logout(request: Request) -> JSONResponse:
     response = JSONResponse({"detail": "Sessió tancada"})
-    cookie_kwargs = dict(
-        httponly=True,
-        secure=settings.auth_cookie_secure,
-        samesite=settings.auth_cookie_samesite,
+    response.delete_cookie(
+        key=settings.auth_cookie_name,
+        **_cookie_kwargs(request),
     )
-    if settings.auth_cookie_domain:
-        cookie_kwargs["domain"] = settings.auth_cookie_domain
-    response.delete_cookie(key=settings.auth_cookie_name, **cookie_kwargs)
     return response
 
 
@@ -190,7 +186,9 @@ def _extract_request_fingerprint(request: Optional[Request]) -> tuple[Optional[s
     return ip, user_agent
 
 
-def _build_cookie_response(access_token: str, redirect_to: Optional[str]):
+def _build_cookie_response(
+    access_token: str, redirect_to: Optional[str], request: Optional[Request] = None
+):
     target = redirect_to or settings.post_login_redirect_url
     if not target:
         raise HTTPException(status_code=400, detail="Missing redirect target")
@@ -198,16 +196,26 @@ def _build_cookie_response(access_token: str, redirect_to: Optional[str]):
         raise HTTPException(status_code=400, detail="Redirect host not allowed")
 
     response = RedirectResponse(url=target, status_code=307)
-    cookie_kwargs = dict(
-        httponly=True,
+    response.set_cookie(
+        key=settings.auth_cookie_name,
+        value=access_token,
         max_age=settings.jwt_expiration_minutes * 60,
+        **_cookie_kwargs(request),
+    )
+    return response
+
+
+def _cookie_kwargs(request: Optional[Request] = None) -> dict:
+    base = dict(
+        httponly=True,
         secure=settings.auth_cookie_secure,
         samesite=settings.auth_cookie_samesite,
     )
+    if request and request.url.scheme == "http":
+        base["secure"] = False
     if settings.auth_cookie_domain:
-        cookie_kwargs["domain"] = settings.auth_cookie_domain
-    response.set_cookie(key=settings.auth_cookie_name, value=access_token, **cookie_kwargs)
-    return response
+        base["domain"] = settings.auth_cookie_domain
+    return base
 
 
 def _redirect_allowed(url: str) -> bool:
