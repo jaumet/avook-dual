@@ -90,7 +90,9 @@ docker compose port frontend 80
    At minimum you must define `JWT_SECRET_KEY`, `FRONTEND_MAGIC_LOGIN_URL`, and `POST_LOGIN_REDIRECT_URL`. The template now uses
    a SQLite `DATABASE_URL=sqlite:///./audiovook.db` plus localhost URLs so you can boot the API without editing anything else.
    FastAPI creates the SQLite database automatically inside the `backend/` folder. Override the URLs when deploying to a public
-   host.
+   host. Set `PAYPAL_IPN_VERIFY_URL=https://ipnpb.sandbox.paypal.com/cgi-bin/webscr` when you want to validate IPN messages
+   against the PayPal sandbox instead of production. Hosted PayPal button IDs live in `catalog/packages.json` and are rendered
+   directly on `products.html`.
 
    > **Note:** List-style settings such as `ALLOWED_REDIRECT_HOSTS` and `ALLOWED_CORS_ORIGINS` accept either comma-separated
    > values or JSON arrays. Leave the variables blank if you prefer to fall back to the built-in defaults.
