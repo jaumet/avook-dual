@@ -42,11 +42,9 @@ class Settings(BaseSettings):
         "https://dual.local/?login=ok",
         description="Default URL used when issuing HttpOnly cookie responses after magic login.",
     )
-    stripe_webhook_secret: Optional[str] = Field(
-        None, description="Stripe webhook signing secret used to validate events."
-    )
-    stripe_secret_key: Optional[str] = Field(
-        None, description="Stripe secret key used to fetch checkout line items."
+    paypal_ipn_verify_url: AnyUrl = Field(
+        "https://ipnpb.paypal.com/cgi-bin/webscr",
+        description="PayPal IPN validation endpoint used to confirm notifications.",
     )
     email_from_address: str = Field(
         "no-reply@audiovook.com", description="Sender email used for transactional emails."

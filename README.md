@@ -104,7 +104,7 @@ docker compose port frontend 80
 ### Catalog data layout
 
 - `catalog/titles.json` stores the authoritative metadata for every title (description, asset names, cover, etc.).
-- `catalog/packages.json` groups `title_ids` into sellable packages, including optional Stripe product/price IDs. One of the packages must have `"is_free": true` so the backend knows which entries are public.
+- `catalog/packages.json` groups `title_ids` into sellable packages. One of the packages must have `"is_free": true` so the backend knows which entries are public. Paid packages now include optional PayPal hosted button identifiers to render the checkout buttons.
 - `audios-free.json` remains as a static fallback for browsers that cannot reach the API (for example when running `python -m http.server` without the backend). The file mirrors the titles listed in the free package.
 
 ### API overview
@@ -113,13 +113,13 @@ The following routes are now available (they are the same whether you run locall
 
 - `POST /auth/magic-link/request` – issues a one-time magic link token and emails it to the user.
 - `GET /auth/magic-login?token=<RAW_TOKEN>` – validates a magic link token and returns a signed JWT. Pass `response_mode=cookie` to set the JWT inside an `HttpOnly` cookie and redirect to the configured `POST_LOGIN_REDIRECT_URL`.
-- `POST /webhooks/stripe` – consumes Stripe checkout events and grants the matching catalog packages to the purchaser.
+- `POST /webhooks/paypal` – consumes PayPal IPN notifications and grants the matching catalog packages to the purchaser.
 
 - `GET /catalog/free` – returns the entries assigned to the `is_free` package inside `catalog/packages.json`.
 - `GET /catalog/packages/{package_id}` – returns a single package for authenticated users who own it (or have `full_access`).
 - `GET /auth/me` – returns the authenticated user profile, including the list of package IDs that have been granted.
 
-The Stripe webhook maps checkout sessions to package IDs using `catalog/packages.json`. Set both `STRIPE_WEBHOOK_SECRET` (to validate signatures) and `STRIPE_SECRET_KEY` (to inspect line items) so that purchases automatically assign the correct packages to a user.
+PayPal IPN posts are validated against the configured verification URL (`PAYPAL_IPN_VERIFY_URL`) and map the `custom` field back to package IDs from `catalog/packages.json`.
 
 All state is stored using SQLAlchemy models for `users` and `magic_link_tokens`, matching the schema from the documentation.
 
