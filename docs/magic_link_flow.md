@@ -6,17 +6,17 @@ This document summarizes the secure passwordless login flow that Audiovook Dual 
 
 Actors involved:
 
-- **Stripe** handles the checkout flow and shares the customer's email via webhooks.
+- **PayPal** handles the checkout flow and shares the customer's email via IPN callbacks.
 - **Audiovook backend** (FastAPI, Postgres, JWT) stores users and issues access tokens.
 - **User** only needs to remember their email address.
 
 High-level flow:
 
-> **Note:** The production backend now grants per-package entitlements using `catalog/packages.json`. The legacy `full_access` flag is still supported for all-access plans, but most Stripe purchases map to specific package IDs.
+> **Note:** The production backend now grants per-package entitlements using `catalog/packages.json`. The legacy `full_access` flag is still supported for all-access plans, but PayPal purchases map to specific package IDs through the IPN `custom` field.
 
-1. **Stripe purchase**
-   - Stripe sends a webhook to the backend.
-   - The backend creates or updates the `User` with `full_access = true` using the Stripe email.
+1. **PayPal purchase**
+   - PayPal sends an IPN webhook to the backend once the payment is completed.
+   - The backend creates or updates the `User` with the purchased package IDs using the PayPal email.
 2. **User requests access**
    - The user submits their email to a simple form.
    - The frontend calls `POST /auth/magic-link/request`.
@@ -72,37 +72,42 @@ CREATE INDEX idx_magic_link_tokens_token_hash ON magic_link_tokens(token_hash);
 5. **Rate limiting per email** — No more than 5 magic links per hour per email (configurable via environment variables).
 6. **Localized comms** — Send bilingual (Catalan/English) HTML + text emails so users instantly recognize the login request.
 
-## 4. Stripe webhook to grant access
+## 4. PayPal IPN to grant access
 
 FastAPI skeleton:
 
 ```python
-@router.post("/webhooks/stripe")
-async def stripe_webhook(request: Request):
+@router.post("/webhooks/paypal")
+async def paypal_ipn(request: Request):
     payload = await request.body()
-    sig_header = request.headers.get("stripe-signature")
-    event = stripe.Webhook.construct_event(payload, sig_header, STRIPE_WEBHOOK_SECRET)
+    verified = await verify_with_paypal(payload)  # POSTs `cmd=_notify-validate` back to PayPal
+    if not verified:
+        raise HTTPException(status_code=400, detail="Invalid IPN")
 
-    if event["type"] == "checkout.session.completed":
-        data = event["data"]["object"]
-        customer_email = data.get("customer_details", {}).get("email")
-        if customer_email:
-            upsert_user_with_full_access(db, customer_email)
+    params = parse_qs(payload.decode())
+    payment_status = params.get("payment_status", [""])[0].lower()
+    payer_email = params.get("payer_email", [""])[0]
+    package_ids = params.get("custom", [""])[0].split(",")
+
+    if payment_status == "completed" and payer_email and package_ids:
+        upsert_user_packages(db, payer_email, package_ids)
     return {"ok": True}
 ```
 
 Helper:
 
 ```python
-def upsert_user_with_full_access(db, email: str):
+def upsert_user_packages(db, email: str, package_ids: list[str]):
     email_norm = email.strip().lower()
     user = db.query(User).filter(User.email == email_norm).first()
     if not user:
-        user = User(email=email_norm, full_access=True, is_active=True)
+        user = User(email=email_norm, full_access=False, is_active=True)
         db.add(user)
-    else:
-        user.full_access = True
-        user.is_active = True
+    existing = set(user.packages)
+    for package_id in package_ids:
+        if package_id not in existing:
+            user.package_links.append(UserPackage(package_id=package_id))
+    user.is_active = True
     db.commit()
     db.refresh(user)
     return user

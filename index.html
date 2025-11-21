@@ -16,10 +16,14 @@
 <div id="loginToast" class="login-toast" role="status" aria-live="polite"></div>
 <header>
   <a href="https://audiovook.com/dual/" style="display:flex;align-items:center;gap:.6em;text-decoration:none;color:inherit">
-    <img src="./imgs/logo-dual-fons-blau.png" alt="Audiovook Dual logo"/> 
-    <h2>Dual</h2>&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<h5>by Audiovook</h5> 
+    <img src="./imgs/logo-dual-fons-blau.png" alt="Audiovook Dual logo"/>
+    <h2>Dual</h2>&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<h5>by Audiovook</h5>
     <img style="height:20px !important; width:auto;" src="./imgs/logo.png" alt="Audiovook logo"/>
   </a>
+  <nav class="main-nav">
+    <a href="./index.html" aria-current="page">Inici</a>
+    <a href="./products.html">Productes</a>
+  </nav>
   <div class="rightBtns">
     <button id="themeBtn">☀️ Clar</button>
     <button id="infoBtn">❓ Ajuda</button>
@@ -145,10 +149,13 @@
 
 <script>
 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const isDualLocal = window.location.hostname === 'dual.local';
 const API_BASE_URL = window.__AVOOK_API_BASE__ ||
   (isLocalhost
     ? `${window.location.protocol}//${window.location.hostname}:8000`
-    : 'https://api.audiovook.com');
+    : isDualLocal
+      ? window.location.origin
+      : 'https://api.audiovook.com');
 
 setupMagicLinkForm();
 handleLoginToastFromQuery();
