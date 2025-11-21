@@ -90,7 +90,9 @@ docker compose port frontend 80
    At minimum you must define `JWT_SECRET_KEY`, `FRONTEND_MAGIC_LOGIN_URL`, and `POST_LOGIN_REDIRECT_URL`. The template now uses
    a SQLite `DATABASE_URL=sqlite:///./audiovook.db` plus localhost URLs so you can boot the API without editing anything else.
    FastAPI creates the SQLite database automatically inside the `backend/` folder. Override the URLs when deploying to a public
-   host.
+   host. Set `PAYPAL_IPN_VERIFY_URL=https://ipnpb.sandbox.paypal.com/cgi-bin/webscr` when you want to validate IPN messages
+   against the PayPal sandbox instead of production. Hosted PayPal button IDs live in `catalog/packages.json` and are rendered
+   directly on `products.html`.
 
    > **Note:** List-style settings such as `ALLOWED_REDIRECT_HOSTS` and `ALLOWED_CORS_ORIGINS` accept either comma-separated
    > values or JSON arrays. Leave the variables blank if you prefer to fall back to the built-in defaults.
@@ -104,7 +106,7 @@ docker compose port frontend 80
 ### Catalog data layout
 
 - `catalog/titles.json` stores the authoritative metadata for every title (description, asset names, cover, etc.).
-- `catalog/packages.json` groups `title_ids` into sellable packages, including optional Stripe product/price IDs. One of the packages must have `"is_free": true` so the backend knows which entries are public.
+- `catalog/packages.json` groups `title_ids` into sellable packages. One of the packages must have `"is_free": true` so the backend knows which entries are public. Paid packages now include optional PayPal hosted button identifiers to render the checkout buttons.
 - `audios-free.json` remains as a static fallback for browsers that cannot reach the API (for example when running `python -m http.server` without the backend). The file mirrors the titles listed in the free package.
 
 ### API overview
@@ -113,13 +115,13 @@ The following routes are now available (they are the same whether you run locall
 
 - `POST /auth/magic-link/request` – issues a one-time magic link token and emails it to the user.
 - `GET /auth/magic-login?token=<RAW_TOKEN>` – validates a magic link token and returns a signed JWT. Pass `response_mode=cookie` to set the JWT inside an `HttpOnly` cookie and redirect to the configured `POST_LOGIN_REDIRECT_URL`.
-- `POST /webhooks/stripe` – consumes Stripe checkout events and grants the matching catalog packages to the purchaser.
+- `POST /webhooks/paypal` – consumes PayPal IPN notifications and grants the matching catalog packages to the purchaser.
 
 - `GET /catalog/free` – returns the entries assigned to the `is_free` package inside `catalog/packages.json`.
 - `GET /catalog/packages/{package_id}` – returns a single package for authenticated users who own it (or have `full_access`).
 - `GET /auth/me` – returns the authenticated user profile, including the list of package IDs that have been granted.
 
-The Stripe webhook maps checkout sessions to package IDs using `catalog/packages.json`. Set both `STRIPE_WEBHOOK_SECRET` (to validate signatures) and `STRIPE_SECRET_KEY` (to inspect line items) so that purchases automatically assign the correct packages to a user.
+PayPal IPN posts are validated against the configured verification URL (`PAYPAL_IPN_VERIFY_URL`) and map the `custom` field back to package IDs from `catalog/packages.json`.
 
 All state is stored using SQLAlchemy models for `users` and `magic_link_tokens`, matching the schema from the documentation.
 
@@ -223,3 +225,5 @@ Follow these steps to see the full flow (database, email-free magic link, cookie
 ```
 
 After a successful cookie-based login the backend redirects back to `/?login=ok`, triggering a toast that confirms the session is ready.
+
+If you want to close the session, use the **Tancar sessió** button in the header. It clears the browser tokens and calls `POST /auth/logout` to expire the HttpOnly cookie before reloading the page.
