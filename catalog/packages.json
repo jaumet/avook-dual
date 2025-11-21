@@ -6,8 +6,6 @@
       "level_range": "A0",
       "description": "Mostra oberta amb tots els relats del nivell A0.",
       "is_free": true,
-      "stripe_product_id": null,
-      "stripe_price_id": null,
       "title_ids": [
         "0-1-Salutacions-i-emocions",
         "0-2-D-on-ets",
@@ -23,8 +21,8 @@
       "level_range": "A1",
       "description": "Relats A1 orientats a estudiants que passen del nivell inicial.",
       "is_free": false,
-      "stripe_product_id": "prod_pkg_a1",
-      "stripe_price_id": "price_pkg_a1",
+      "paypal_button_id": "PAYPAL_BTN_A1",
+      "price_eur": 9.99,
       "title_ids": [
         "titol_test",
         "Els-primers-pobles-del-mon"
@@ -36,8 +34,8 @@
       "level_range": "A2",
       "description": "Històries intermitges amb nous reptes i vocabulari.",
       "is_free": false,
-      "stripe_product_id": "prod_pkg_a2",
-      "stripe_price_id": "price_pkg_a2",
+      "paypal_button_id": "PAYPAL_BTN_A2",
+      "price_eur": 12.99,
       "title_ids": [
         "el-mapa-de-la-biblioteca"
       ]
@@ -48,8 +46,8 @@
       "level_range": "B1",
       "description": "Converses i reportatges per consolidar el nivell B1.",
       "is_free": false,
-      "stripe_product_id": "prod_pkg_b1",
-      "stripe_price_id": "price_pkg_b1",
+      "paypal_button_id": "PAYPAL_BTN_B1",
+      "price_eur": 14.99,
       "title_ids": [
         "Reportatge-al-mercat"
       ]
@@ -60,8 +58,8 @@
       "level_range": "B2",
       "description": "Situacions avançades per perfeccionar el català.",
       "is_free": false,
-      "stripe_product_id": "prod_pkg_b2",
-      "stripe_price_id": "price_pkg_b2",
+      "paypal_button_id": "PAYPAL_BTN_B2",
+      "price_eur": 16.99,
       "title_ids": [
         "Trobada-a-l-exposicio"
       ]

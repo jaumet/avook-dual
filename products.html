@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dual — Paquets disponibles</title>
+<link rel="stylesheet" href="./css/index.css">
+<script src="./js/polyfills.js"></script>
+<script type="module" src="./js/auth.js"></script>
+</head>
+<body class="dark">
+<header>
+  <a href="https://audiovook.com/dual/" style="display:flex;align-items:center;gap:.6em;text-decoration:none;color:inherit">
+    <img src="./imgs/logo-dual-fons-blau.png" alt="Audiovook Dual logo"/>
+    <h2>Dual</h2>&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<h5>by Audiovook</h5>
+    <img style="height:20px !important; width:auto;" src="./imgs/logo.png" alt="Audiovook logo"/>
+  </a>
+  <nav class="main-nav">
+    <a href="./index.html">Inici</a>
+    <a href="./products.html" aria-current="page">Productes</a>
+  </nav>
+  <div class="rightBtns">
+    <button id="logoutBtn">Tancar sessió</button>
+    <button id="themeBtn">☀️ Clar</button>
+    <button id="infoBtn">❓ Ajuda</button>
+  </div>
+</header>
+
+<main>
+  <section class="product-hero">
+    <h2>Compra paquets Dual</h2>
+    <p>Tria el paquet que millor s'adapta al teu nivell i paga amb PayPal. Un cop completat el pagament rebrem una notificació IPN i activarem el teu accés de forma automàtica.</p>
+  </section>
+
+  <section id="productsGrid" class="products-grid" aria-live="polite"></section>
+</main>
+
+<div id="infoModal">
+  <div id="infoContent">
+    <h3>Ajuda amb els pagaments</h3>
+    <p>Els pagaments es processen directament a PayPal. Utilitzem les notificacions IPN per activar el teu accés als paquets comprats. Si vols afegir més d'un paquet, completa cada compra per separat.</p>
+    <p>Si ja has pagat i encara no tens accés, assegura't d'haver utilitzat el mateix correu a PayPal i a Dual. En cas contrari, contacta amb nosaltres amb el comprovant de PayPal.</p>
+    <button id="closeModal">Tanca</button>
+  </div>
+</div>
+
+<script type="module" src="./js/products.js"></script>
+</body>
+</html>

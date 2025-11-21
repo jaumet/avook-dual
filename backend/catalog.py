@@ -78,22 +78,6 @@ def build_catalog_for_package_id(package_id: str) -> Dict[str, Any]:
     return build_catalog_response(package)
 
 
-def package_lookup_maps() -> tuple[Dict[str, str], Dict[str, str]]:
-    """Return helper dicts keyed by Stripe product/price ids."""
-
-    product_map: Dict[str, str] = {}
-    price_map: Dict[str, str] = {}
-    for package in get_packages():
-        pkg_id = package.get("id")
-        product_id = package.get("stripe_product_id")
-        price_id = package.get("stripe_price_id")
-        if product_id:
-            product_map[product_id] = pkg_id
-        if price_id:
-            price_map[price_id] = pkg_id
-    return product_map, price_map
-
-
 def normalize_package_ids(package_ids: Iterable[str]) -> List[str]:
     seen = []
     for package_id in package_ids:

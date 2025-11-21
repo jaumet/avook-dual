@@ -35,6 +35,45 @@ window.fetch = (input, init) => {
   return originalFetch(preparedInput, preparedInit);
 };
 
+function clearStoredSession(){
+  localStorage.removeItem('av_jwt');
+  localStorage.removeItem('audiovook_token');
+  localStorage.removeItem('av_user');
+}
+
+async function setupLogoutButton(){
+  const logoutBtn = document.getElementById('logoutBtn');
+  if(!logoutBtn) return;
+
+  const hasSession = Boolean(localStorage.getItem('av_jwt') || localStorage.getItem('audiovook_token'));
+  if(!hasSession){
+    logoutBtn.style.display = 'none';
+    return;
+  }
+
+  const resetUi = () => {
+    logoutBtn.textContent = 'Sessió tancada';
+    logoutBtn.disabled = true;
+    setTimeout(() => window.location.href = './index.html', 400);
+  };
+
+  logoutBtn.addEventListener('click', async () => {
+    logoutBtn.disabled = true;
+    logoutBtn.textContent = 'Sortint...';
+    try {
+      await originalFetch(`${API_BASE_URL}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (err){
+      console.warn('No s\'ha pogut contactar amb el servidor de logout', err);
+    } finally {
+      clearStoredSession();
+      resetUi();
+    }
+  });
+}
+
 async function exchangeMagicTokenIfPresent() {
   const params = new URLSearchParams(window.location.search);
   const token = params.get('token');
@@ -63,3 +102,5 @@ async function exchangeMagicTokenIfPresent() {
 }
 
 exchangeMagicTokenIfPresent();
+
+document.addEventListener('DOMContentLoaded', setupLogoutButton);

@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .database import Base, engine
-from .routers import auth, catalog, stripe_webhooks
+from .routers import auth, catalog, paypal_webhooks
 from .settings import get_settings
 
 logging.basicConfig(level=logging.INFO)
@@ -25,4 +25,4 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(catalog.router)
-app.include_router(stripe_webhooks.router)
+app.include_router(paypal_webhooks.router)
