@@ -3,7 +3,13 @@ const PAYPAL_ACTION_URL = isLocalhost
   ? 'https://www.sandbox.paypal.com/cgi-bin/webscr'
   : 'https://www.paypal.com/cgi-bin/webscr';
 
-const API_BASE_URL = window.__AVOOK_API_BASE__;
+const isDualLocal = window.location.hostname === 'dual.local';
+const API_BASE_URL = window.__AVOOK_API_BASE__ ||
+  (isLocalhost
+    ? `${window.location.protocol}//${window.location.hostname}:8000`
+    : isDualLocal
+      ? window.location.origin
+      : 'https://api.audiovook.com');
 const PAYPAL_NOTIFY_URL = `${API_BASE_URL}/webhooks/paypal`;
 
 function formatPrice(value){

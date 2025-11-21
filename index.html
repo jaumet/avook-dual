@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Audiovook Dual — Aprèn llengües escoltant històries</title>
 <link rel="stylesheet" href="./css/index.css">
+<script src="./js/polyfills.js"></script>
 <script type="module" src="./js/auth.js"></script>
 
 <style>
@@ -149,10 +150,13 @@
 
 <script>
 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const isDualLocal = window.location.hostname === 'dual.local';
 const API_BASE_URL = window.__AVOOK_API_BASE__ ||
   (isLocalhost
     ? `${window.location.protocol}//${window.location.hostname}:8000`
-    : 'https://api.audiovook.com');
+    : isDualLocal
+      ? window.location.origin
+      : 'https://api.audiovook.com');
 
 setupMagicLinkForm();
 handleLoginToastFromQuery();
